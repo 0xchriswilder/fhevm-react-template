@@ -1,7 +1,2 @@
 packages:
   - packages/*
-  - examples/vue-example
-  - packages/nextjs-showcase
-  - packages/react-showcase
-  - packages/vue-showcase
-  - packages/node-showcase
