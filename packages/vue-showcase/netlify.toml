@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build"
+  command = "cd ../../ && pnpm install && cd packages/vue-showcase && pnpm run build"
   publish = "dist"
 
 [build.environment]

@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build"
+  command = "cd ../../ && pnpm install && cd packages/react-showcase && pnpm run build"
   publish = "build"
 
 [build.environment]
