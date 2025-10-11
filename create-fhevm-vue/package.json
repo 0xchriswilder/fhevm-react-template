@@ -1,6 +1,6 @@
 {
   "name": "create-fhevm-vue",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Create a Vue app with FHEVM SDK integration",
   "bin": {
     "create-fhevm-vue": "./bin/create-fhevm-vue.js"
