@@ -249,7 +249,7 @@ cd my-app
 npm install
 npm start
 ```
-- **Package:** [create-fhevm-react](https://www.npmjs.com/package/create-fhevm-react)
+- **Package:** [create-fhevm-react](https://www.npmjs.com/package/create-fhevm-react) | **Live Demo:** [React Showcase](https://react-showcase-1738.up.railway.app/)
 - **Features:** Complete React app with **Universal FHEVM SDK**, beautiful UI, deployed contract
 - **Tech:** React 18, TypeScript, Create React App, Tailwind CSS
 
@@ -260,7 +260,7 @@ cd my-app
 npm install
 npm run dev
 ```
-- **Package:** [create-fhevm-nextjs](https://www.npmjs.com/package/create-fhevm-nextjs)
+- **Package:** [create-fhevm-nextjs](https://www.npmjs.com/package/create-fhevm-nextjs) | **Live Demo:** [Next.js Showcase](https://nextjs-showcase-1661.up.railway.app/)
 - **Features:** Complete Next.js app with **Universal FHEVM SDK**, beautiful UI, deployed contract
 - **Tech:** Next.js 15, TypeScript, App Router, Tailwind CSS
 
@@ -271,7 +271,7 @@ cd my-app
 npm install
 npm run dev
 ```
-- **Package:** [create-fhevm-vue](https://www.npmjs.com/package/create-fhevm-vue)
+- **Package:** [create-fhevm-vue](https://www.npmjs.com/package/create-fhevm-vue) | **Live Demo:** [Vue Showcase](https://vue-showcase-2780.up.railway.app/)
 - **Features:** Complete Vue app with **Universal FHEVM SDK**, beautiful UI, deployed contract
 - **Tech:** Vue 3, TypeScript, Vite, Tailwind CSS
 
@@ -407,6 +407,11 @@ import { useWallet, useFhevm, useContract, useFhevmOperations } from '@fhevm-sdk
 
 All examples are running with **real FHEVM interactions** on Sepolia testnet:
 
+- **⚛️ React Showcase:** [https://react-showcase-1738.up.railway.app/](https://react-showcase-1738.up.railway.app/)
+- **🚀 Next.js Showcase:** [https://nextjs-showcase-1661.up.railway.app/](https://nextjs-showcase-1661.up.railway.app/)
+- **💚 Vue Showcase:** [https://vue-showcase-2780.up.railway.app/](https://vue-showcase-2780.up.railway.app/)
+
+**Contract Details:**
 - **Contract:** `0xead137D42d2E6A6a30166EaEf97deBA1C3D1954e`
 - **Network:** Sepolia testnet (Chain ID: 11155111)
 - **Features:** Real encryption, decryption, contract interactions
