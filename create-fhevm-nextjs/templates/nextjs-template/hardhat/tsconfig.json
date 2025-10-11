@@ -1,23 +1,43 @@
 {
   "compilerOptions": {
-    "declaration": true,
-    "declarationMap": true,
-    "outDir": "dist",
-    "emitDecoratorMetadata": true,
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "forceConsistentCasingInFileNames": true,
-    "lib": ["es2022"], // get error cause (ErrorOptions)
+    "target": "ES2017",
+    "lib": ["ES2017", "DOM"],
     "module": "commonjs",
-    "moduleResolution": "node",
-    "noImplicitAny": true,
-    "removeComments": true,
-    "resolveJsonModule": true,
-    "sourceMap": true,
+    "declaration": true,
     "strict": true,
-    "target": "es2022" // get error cause (ErrorOptions)
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": false,
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false,
+    "typeRoots": ["./node_modules/@types"],
+    "types": ["node", "mocha", "chai"],
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
   },
-  "exclude": ["node_modules"],
-  "files": ["./hardhat.config.ts"],
-  "include": ["src/**/*", "tasks/**/*", "test/**/*", "deploy/**/*", "types/"]
+  "include": [
+    "./deploy/**/*",
+    "./test/**/*",
+    "./tasks/**/*",
+    "./hardhat.config.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "artifacts",
+    "cache",
+    "coverage",
+    "coverage.json",
+    "dist",
+    "typechain",
+    "typechain-types"
+  ]
 }

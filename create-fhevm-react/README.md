@@ -66,14 +66,8 @@ hardhat/
 ├── contracts/
 │   └── FHECounter.sol          # FHE Counter smart contract
 ├── deploy/
-│   └── deploy.ts              # Deployment script for Sepolia
-├── test/
-│   ├── FHECounter.ts          # Contract tests
-│   └── FHECounterSepolia.ts   # Sepolia-specific tests
-├── tasks/
-│   ├── accounts.ts            # Account management tasks
-│   └── FHECounter.ts          # FHE Counter specific tasks
-├── hardhat.config.ts          # Hardhat configuration
+│   └── deploy.ts              # Deployment script
+├── hardhat.config.js          # Hardhat configuration (JavaScript)
 ├── package.json               # Hardhat dependencies
 └── tsconfig.json             # TypeScript configuration
 ```
@@ -87,32 +81,26 @@ cd hardhat
 npm install
 
 # Compile contracts
-npx hardhat compile
+npm run compile
 
-# Deploy to Sepolia testnet
-npm run deploy
+# Start local hardhat node
+npm run chain
 
-# Run tests
-npm test
+# Deploy to hardhat network
+npm run deploy:hardhat
 
-# Run tests on Sepolia
-npx hardhat test --network sepolia
-
-# Get account balances
-npx hardhat accounts
-
-# Run FHE Counter specific tasks
-npx hardhat fhe-counter
+# Deploy to Sepolia testnet (requires INFURA_API_KEY)
+npm run deploy:sepolia
 ```
 
 ### **📋 What's Included:**
 - ✅ **FHE Counter Contract** - Complete Solidity smart contract
-- ✅ **Deployment Scripts** - Ready-to-use Sepolia deployment
-- ✅ **Test Suite** - Comprehensive contract testing
+- ✅ **Deployment Scripts** - Ready-to-use deployment scripts
 - ✅ **TypeScript Support** - Full type safety for contracts
-- ✅ **Hardhat Tasks** - Custom CLI commands for FHE operations
-- ✅ **Network Configuration** - Pre-configured for Sepolia testnet
+- ✅ **Network Configuration** - Pre-configured for hardhat and sepolia
 - ✅ **FHEVM Integration** - Built-in FHEVM contract support
+- ✅ **Simplified Scripts** - Clean, focused deployment commands
+- ✅ **JavaScript Config** - No TypeScript compilation issues
 
 ## Requirements
 
