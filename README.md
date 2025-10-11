@@ -250,7 +250,7 @@ npm install
 npm start
 ```
 - **Package:** [create-fhevm-react](https://www.npmjs.com/package/create-fhevm-react)
-- **Features:** Complete React app with FHEVM SDK, beautiful UI, deployed contract
+- **Features:** Complete React app with **Universal FHEVM SDK**, beautiful UI, deployed contract
 - **Tech:** React 18, TypeScript, Create React App, Tailwind CSS
 
 ### **🚀 Next.js NPX Package**
@@ -261,7 +261,7 @@ npm install
 npm run dev
 ```
 - **Package:** [create-fhevm-nextjs](https://www.npmjs.com/package/create-fhevm-nextjs)
-- **Features:** Complete Next.js app with FHEVM SDK, beautiful UI, deployed contract
+- **Features:** Complete Next.js app with **Universal FHEVM SDK**, beautiful UI, deployed contract
 - **Tech:** Next.js 15, TypeScript, App Router, Tailwind CSS
 
 ### **💚 Vue NPX Package**
@@ -272,16 +272,32 @@ npm install
 npm run dev
 ```
 - **Package:** [create-fhevm-vue](https://www.npmjs.com/package/create-fhevm-vue)
-- **Features:** Complete Vue app with FHEVM SDK, beautiful UI, deployed contract
+- **Features:** Complete Vue app with **Universal FHEVM SDK**, beautiful UI, deployed contract
 - **Tech:** Vue 3, TypeScript, Vite, Tailwind CSS
 
 ### **What Each NPX Package Includes:**
-- ✅ **Bundled FHEVM SDK** - No external dependencies
+- ✅ **Universal FHEVM SDK** - **THE SAME SDK** across React, Next.js, and Vue
+- ✅ **Bundled FHEVM SDK** - No external dependencies, works out of the box
 - ✅ **Deployed FHE Counter Contract** - Live on Sepolia testnet
 - ✅ **Beautiful Zama UI** - Professional design system
-- ✅ **Universal FHEVM SDK** - Complete utilities for FHE operations
+- ✅ **Framework-Agnostic Core** - Same FHEVM functionality everywhere
 - ✅ **TypeScript Support** - Full type safety
 - ✅ **Production Ready** - Optimized for deployment
+
+### **🔧 Universal FHEVM SDK - Same SDK, All Frameworks**
+
+**The key advantage:** All NPX packages use the **exact same Universal FHEVM SDK**:
+
+- **React:** `import { useWallet, useFhevm } from 'fhevm-sdk'`
+- **Next.js:** `import { useWallet, useFhevm } from 'fhevm-sdk'`  
+- **Vue:** `import { useWallet, useFhevm } from 'fhevm-sdk'`
+
+**Why this matters:**
+- ✅ **Consistent API** - Same functions across all frameworks
+- ✅ **No learning curve** - Switch frameworks without relearning FHEVM
+- ✅ **Shared knowledge** - Documentation applies to all frameworks
+- ✅ **Universal compatibility** - One SDK works everywhere
+- ✅ **Future-proof** - Updates benefit all frameworks simultaneously
 
 ## 🎯 **Framework Examples**
 
