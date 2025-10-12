@@ -19,11 +19,11 @@ A framework-agnostic frontend toolkit that helps developers run confidential dAp
 ```
 fhevm-react-template/
 ├── 📦 packages/
-│   ├── <img src="public/node.svg" width="16" height="16" alt="SDK"> fhevm-sdk/              # Universal FHEVM SDK Core
-│   ├── <img src="public/react.svg" width="16" height="16" alt="React"> react-showcase/         # React Example (Port 3000)
-│   ├── <img src="public/nextjs.svg" width="16" height="16" alt="Next.js"> nextjs-showcase/        # Next.js Example (Port 3001)
-│   ├── <img src="public/vue.svg" width="16" height="16" alt="Vue"> vue-showcase/           # Vue Example (Port 3003)
-│   ├── <img src="public/node.svg" width="16" height="16" alt="Node.js"> node-showcase/          # Node.js CLI Example
+│   ├── <img src="public/node.svg" width="32" height="32" alt="SDK"> fhevm-sdk/              # Universal FHEVM SDK Core
+│   ├── <img src="public/react.svg" width="32" height="32" alt="React"> react-showcase/         # React Example (Port 3000)
+│   ├── <img src="public/nextjs.svg" width="32" height="32" alt="Next.js"> nextjs-showcase/        # Next.js Example (Port 3001)
+│   ├── <img src="public/vue.svg" width="32" height="32" alt="Vue"> vue-showcase/           # Vue Example (Port 3003)
+│   ├── <img src="public/node.svg" width="32" height="32" alt="Node.js"> node-showcase/          # Node.js CLI Example
 │   └── 🔨 hardhat/                # Smart Contracts
 ├── 📄 pnpm-workspace.yaml         # Monorepo configuration
 └── 📋 README.md                   # This file
@@ -123,16 +123,16 @@ Each showcase is a complete development environment ready to use:
 
 | Environment | Location | Command | Port | What You Get |
 |-------------|----------|---------|------|--------------|
-| <img src="public/react.svg" width="16" height="16" alt="React"> **React App** | `packages/react-showcase/` | `pnpm --filter react-showcase start` | 3000 | Full React app with FHEVM |
-| <img src="public/nextjs.svg" width="16" height="16" alt="Next.js"> **Next.js App** | `packages/nextjs-showcase/` | `pnpm --filter nextjs-showcase dev` | 3001 | Full Next.js app with FHEVM |
-| <img src="public/vue.svg" width="16" height="16" alt="Vue"> **Vue App** | `packages/vue-showcase/` | `pnpm --filter vue-showcase dev` | 3003 | Full Vue app with FHEVM |
-| <img src="public/node.svg" width="16" height="16" alt="Node.js"> **Node.js CLI** | `packages/node-showcase/` | `pnpm --filter node-showcase start` | CLI | Node.js FHEVM demo |
-| <img src="public/node.svg" width="16" height="16" alt="SDK"> **SDK Package** | `packages/fhevm-sdk/` | `pnpm --filter fhevm-sdk build` | N/A | Universal FHEVM SDK |
-| 🔨 **Smart Contracts** | `packages/hardhat/` | `pnpm --filter hardhat deploy` | N/A | FHE Counter Contract |
+| <img src="public/react.svg" width="32" height="32" alt="React"> | `packages/react-showcase/` | `pnpm --filter react-showcase start` | 3000 | Full React app with FHEVM |
+| <img src="public/nextjs.svg" width="32" height="32" alt="Next.js"> | `packages/nextjs-showcase/` | `pnpm --filter nextjs-showcase dev` | 3001 | Full Next.js app with FHEVM |
+| <img src="public/vue.svg" width="32" height="32" alt="Vue"> | `packages/vue-showcase/` | `pnpm --filter vue-showcase dev` | 3003 | Full Vue app with FHEVM |
+| <img src="public/node.svg" width="32" height="32" alt="Node.js"> | `packages/node-showcase/` | `pnpm --filter node-showcase start` | CLI | Node.js FHEVM demo |
+| <img src="public/node.svg" width="32" height="32" alt="SDK"> | `packages/fhevm-sdk/` | `pnpm --filter fhevm-sdk build` | N/A | Universal FHEVM SDK |
+| 🔨 | `packages/hardhat/` | `pnpm --filter hardhat deploy` | N/A | FHE Counter Contract |
 
 ### **How Each Environment Works**
 
-#### **<img src="public/react.svg" width="16" height="16" alt="React"> React Development Environment**
+#### **<img src="public/react.svg" width="32" height="32" alt="React"> React Development Environment**
 ```bash
 # Location: packages/react-showcase/
 cd packages/react-showcase
@@ -145,7 +145,7 @@ pnpm start  # Starts React app on http://localhost:3000
 # - Ready to edit and develop
 ```
 
-#### **<img src="public/nextjs.svg" width="16" height="16" alt="Next.js"> Next.js Development Environment**
+#### **<img src="public/nextjs.svg" width="32" height="32" alt="Next.js"> Next.js Development Environment**
 ```bash
 # Location: packages/nextjs-showcase/
 cd packages/nextjs-showcase
@@ -158,7 +158,7 @@ pnpm dev  # Starts Next.js app on http://localhost:3001
 # - Ready to edit and develop
 ```
 
-#### **<img src="public/vue.svg" width="16" height="16" alt="Vue"> Vue Development Environment**
+#### **<img src="public/vue.svg" width="32" height="32" alt="Vue"> Vue Development Environment**
 ```bash
 # Location: packages/vue-showcase/
 cd packages/vue-showcase
@@ -171,7 +171,7 @@ pnpm dev  # Starts Vue app on http://localhost:3003
 # - Ready to edit and develop
 ```
 
-#### **<img src="public/node.svg" width="16" height="16" alt="Node.js"> Node.js Development Environment**
+#### **<img src="public/node.svg" width="32" height="32" alt="Node.js"> Node.js Development Environment**
 ```bash
 # Location: packages/node-showcase/
 cd packages/node-showcase
@@ -183,7 +183,7 @@ pnpm start  # Runs Node.js FHEVM demo
 # - Ready to edit and develop
 ```
 
-#### **<img src="public/node.svg" width="16" height="16" alt="SDK"> SDK Development Environment**
+#### **<img src="public/node.svg" width="32" height="32" alt="SDK"> SDK Development Environment**
 ```bash
 # Location: packages/fhevm-sdk/
 cd packages/fhevm-sdk
