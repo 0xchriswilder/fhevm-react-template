@@ -302,6 +302,9 @@ function App() {
                     </svg>
                   </div>
                   <span className="status-badge bg-red-600 text-white">ERROR</span>
+                  {fhevmError && (
+                    <span className="text-red-600 text-sm ml-2">{fhevmError}</span>
+                  )}
                 </div>
               ) : fhevmStatus === 'loading' ? (
                 <div className="flex items-center gap-2">
