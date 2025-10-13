@@ -245,12 +245,12 @@
 }
 
 .btn-primary {
-  background-color: #007bff;
-  color: white;
+  background-color: #FFEB3B;
+  color: black;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: #0056b3;
+  background-color: #FDD835;
 }
 
 .btn-success {

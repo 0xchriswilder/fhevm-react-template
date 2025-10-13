@@ -1,99 +1,173 @@
 <template>
   <div class="app">
-    <!-- FHEVM Header -->
+    <!-- Enhanced FHEVM Header -->
     <header class="header">
       <div class="header-content">
-        <h1 class="app-title">Universal FHEVM SDK - Vue Showcase</h1>
+        <div class="header-left">
+          <div class="header-icon">
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+            </svg>
+          </div>
+          <div class="header-text">
+            <h1 class="app-title">Universal FHEVM SDK</h1>
+            <p class="app-subtitle">Vue Showcase</p>
+          </div>
+        </div>
+        <div class="header-right">
+          <div v-if="fhevmStatus === 'ready'" class="status-indicator">
+            <div class="status-icon ready">
+              <svg class="icon" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <span class="status-badge ready">READY</span>
+          </div>
+          <div v-else-if="fhevmStatus === 'error'" class="status-indicator">
+            <div class="status-icon error">
+              <svg class="icon" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <span class="status-badge error">ERROR</span>
+          </div>
+          <div v-else class="status-indicator">
+            <div class="status-icon loading">
+              <svg class="icon animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+              </svg>
+            </div>
+            <span class="status-badge loading">LOADING</span>
+          </div>
+        </div>
       </div>
     </header>
 
     <!-- Main Content -->
     <main class="main-content">
       <div class="container">
-        
-        <!-- FHEVM Status -->
-        <div class="section">
-          <div class="section-header">
-            <h2>FHEVM Status</h2>
-            <span class="status-badge" :class="fhevmStatus">{{ fhevmStatus.toUpperCase() }}</span>
-          </div>
-          <div class="section-content">
-            <p v-if="fhevmError" class="error">Error: {{ fhevmError }}</p>
-            <p v-if="fhevmStatus === 'ready'" class="success">FHEVM Ready</p>
+        <!-- Progress Messages -->
+        <div v-if="message" class="message-container">
+          <div class="message">
+            <svg class="message-icon" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+            </svg>
+            <p>{{ message }}</p>
           </div>
         </div>
 
         <!-- Wallet Connection and SDK Info Side by Side -->
         <div class="main-grid">
           <!-- Wallet Connection -->
-          <div class="section">
-            <div class="section-header">
-              <h2>Wallet Connection</h2>
-              <button v-if="!isConnected" @click="connectWallet" class="connect-btn-header">
-                Connect Wallet
-              </button>
-              <button v-else @click="disconnectWallet" class="disconnect-btn-header">
-                <svg class="lucide-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M9 18l6-6-6-6"/>
+          <div class="glass-card">
+            <div class="card-header">
+              <div class="card-title">
+                <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                 </svg>
+                <h2>Wallet Connection</h2>
+              </div>
+              <button v-if="!isConnected" @click="connectWallet" class="btn-primary">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                Connect
+              </button>
+              <button v-else @click="disconnectWallet" class="btn-danger">
                 Disconnect
               </button>
             </div>
-            <div class="section-content">
-              <div v-if="!isConnected" class="connection-prompt">
+            <div class="card-content">
+              <div v-if="!isConnected" class="empty-state">
+                <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
                 <p>Connect your wallet to use FHEVM features</p>
               </div>
               <div v-else class="connection-info">
-                <div class="info-item">
-                  <span class="label">Status:</span>
-                  <span class="success">Connected</span>
+                <div class="info-card">
+                  <div class="info-row">
+                    <span class="info-label">Status</span>
+                    <span class="info-value success">
+                      <svg class="icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                      </svg>
+                      Connected
+                    </span>
+                  </div>
                 </div>
-                <div class="info-item">
-                  <span class="label">Address:</span>
-                  <span class="address">{{ account }}</span>
+                <div class="info-card">
+                  <div class="info-column">
+                    <span class="info-label">Address</span>
+                    <span class="info-value code-text">{{ account }}</span>
+                  </div>
                 </div>
-                <div class="info-item">
-                  <span class="label">Chain ID:</span>
-                  <span class="value">{{ chainId }}</span>
+                <div class="info-card">
+                  <div class="info-row">
+                    <span class="info-label">Chain ID</span>
+                    <span class="info-value">{{ chainId }}</span>
+                  </div>
                 </div>
-                <div class="info-item">
-                  <span class="label">Contract:</span>
-                  <span class="contract">{{ contractAddress }}</span>
+                <div class="info-card">
+                  <div class="info-column">
+                    <span class="info-label">Contract</span>
+                    <span class="info-value code-text">{{ contractAddress }}</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- SDK Info -->
-          <div class="section">
-            <div class="section-header">
-              <h2>Universal FHEVM SDK</h2>
-              <p class="subtitle">Vue compatible implementation</p>
+          <div class="glass-card">
+            <div class="card-header">
+              <div class="card-title">
+                <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                </svg>
+                <div>
+                  <h2>Universal FHEVM SDK</h2>
+                  <p class="card-subtitle">Vue compatible implementation</p>
+                </div>
+              </div>
             </div>
-            <div class="section-content">
+            <div class="card-content">
               <div class="features-list">
                 <div class="feature-item">
-                  <span class="checkmark">✓</span>
+                  <svg class="checkmark" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                  </svg>
                   <span>Vue compatible FHEVM</span>
                 </div>
                 <div class="feature-item">
-                  <span class="checkmark">✓</span>
+                  <svg class="checkmark" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                  </svg>
                   <span>No webpack bundling issues</span>
                 </div>
                 <div class="feature-item">
-                  <span class="checkmark">✓</span>
+                  <svg class="checkmark" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                  </svg>
                   <span>Real contract interactions</span>
                 </div>
                 <div class="feature-item">
-                  <span class="checkmark">✓</span>
+                  <svg class="checkmark" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                  </svg>
                   <span>Framework-agnostic core</span>
                 </div>
                 <div class="feature-item">
-                  <span class="checkmark">✓</span>
+                  <svg class="checkmark" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                  </svg>
                   <span>Works in React, Next.js, Vue</span>
                 </div>
                 <div class="feature-item">
-                  <span class="checkmark">✓</span>
+                  <svg class="checkmark" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                  </svg>
                   <span>Clean, simple API</span>
                 </div>
               </div>
@@ -108,131 +182,167 @@
         <!-- Main Content Grid -->
         <div class="main-grid">
           <!-- FHEVM Counter Demo -->
-          <div v-if="isConnected && fhevmStatus === 'ready'" class="section">
-            <div class="section-header">
-              <h2>FHEVM Counter Demo</h2>
-              <p class="subtitle">Using REAL FHEVM SDK on Sepolia testnet</p>
+          <div v-if="isConnected && fhevmStatus === 'ready'" class="glass-card">
+            <div class="card-header">
+              <div class="card-title">
+                <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+                <div>
+                  <h2>FHEVM Counter Demo</h2>
+                  <p class="card-subtitle">Using REAL FHEVM SDK on Sepolia testnet</p>
+                </div>
+              </div>
             </div>
-            <div class="section-content">
+            <div class="card-content">
               <div class="demo-controls">
                 <div class="control-group">
-                  <button @click="getCount" class="btn btn-primary">
-                    <svg class="lucide-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M3 3v18h18"/>
-                      <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
+                  <button @click="getCount" class="btn-primary w-full">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                     </svg>
                     Get Count
                   </button>
-                  <div v-if="countHandle" class="handle-display">
-                    <span class="label">Handle:</span>
-                    <span class="handle">{{ countHandle }}</span>
+                  <div v-if="countHandle" class="info-card border-[#FFEB3B]/30">
+                    <span class="info-label">Encrypted Handle</span>
+                    <span class="info-value code-text">{{ countHandle }}</span>
                   </div>
                 </div>
+
+                <div class="divider"></div>
 
                 <div class="control-group">
                   <button 
                     @click="handleDecrypt" 
-                    :disabled="!countHandle"
-                    class="btn btn-success"
+                    :disabled="!countHandle || isDecrypting"
+                    class="btn-secondary w-full"
                   >
-                    <svg class="lucide-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
-                      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    <svg v-if="isDecrypting" class="icon animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
                     </svg>
-                    Decrypt Count
+                    <svg v-else class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                    {{ isDecrypting ? 'Decrypting...' : 'Decrypt Count' }}
                   </button>
-                  <div v-if="decryptedCount !== null" class="result-display">
-                    <span class="label">Decrypted Count:</span>
-                    <span class="result">{{ decryptedCount }}</span>
+                  <div v-if="decryptedCount !== null" class="info-card">
+                    <div class="info-row">
+                      <span class="info-label">Decrypted Count</span>
+                      <span class="info-value result">{{ decryptedCount }}</span>
+                    </div>
                   </div>
                 </div>
 
-                <div class="control-group">
-                  <button 
-                    @click="incrementCounter" 
-                    :disabled="isProcessing"
-                    class="btn btn-warning"
-                  >
-                    <svg class="lucide-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M5 12h14"/>
-                      <path d="M12 5v14"/>
-                    </svg>
-                    Increment
-                  </button>
-                  <button 
-                    @click="decrementCounter" 
-                    :disabled="isProcessing"
-                    class="btn btn-danger"
-                  >
-                    <svg class="lucide-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M5 12h14"/>
-                    </svg>
-                    Decrement
-                  </button>
-                </div>
+                <div class="divider"></div>
 
-                <div v-if="message" class="message">
-                  {{ message }}
+                <div class="control-group">
+                  <div class="button-row">
+                    <button 
+                      @click="incrementCounter" 
+                      :disabled="isIncrementing || isDecrementing"
+                      class="btn-primary"
+                    >
+                      <svg v-if="isIncrementing" class="icon animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                      </svg>
+                      <svg v-else class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5v14"/>
+                      </svg>
+                      {{ isIncrementing ? 'Incrementing...' : '+ Increment' }}
+                    </button>
+                    <button 
+                      @click="decrementCounter" 
+                      :disabled="isIncrementing || isDecrementing"
+                      class="btn-danger"
+                    >
+                      <svg v-if="isDecrementing" class="icon animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                      </svg>
+                      <svg v-else class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14"/>
+                      </svg>
+                      {{ isDecrementing ? 'Decrementing...' : '- Decrement' }}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Public Decryption Demo -->
-          <div v-if="fhevmStatus === 'ready'" class="section">
-            <div class="section-header">
-              <h2>Public Decryption Demo</h2>
-              <p class="subtitle">Testing public decryption with hardcoded ciphertexts</p>
+          <div v-if="fhevmStatus === 'ready'" class="glass-card">
+            <div class="card-header">
+              <div class="card-title">
+                <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                </svg>
+                <div>
+                  <h2>Public Decryption Demo</h2>
+                  <p class="card-subtitle">Testing with hardcoded ciphertexts</p>
+                </div>
+              </div>
             </div>
-            <div class="section-content">
+            <div class="card-content">
               <div class="demo-controls">
                 <!-- Show ciphertexts initially -->
                 <div class="control-group">
-                  <div class="handle-display">
-                    <span class="label">Encrypted Count Ciphertext:</span>
-                    <span class="handle">{{ HARDCODED_CIPHERTEXTS.encryptedCount }}</span>
+                  <div class="info-card">
+                    <span class="info-label">Encrypted Count Ciphertext</span>
+                    <span class="info-value code-text">{{ HARDCODED_CIPHERTEXTS.encryptedCount }}</span>
                   </div>
-                  <div class="handle-display">
-                    <span class="label">Encrypted Sum Ciphertext:</span>
-                    <span class="handle">{{ HARDCODED_CIPHERTEXTS.encryptedSum }}</span>
+                  <div class="info-card">
+                    <span class="info-label">Encrypted Sum Ciphertext</span>
+                    <span class="info-value code-text">{{ HARDCODED_CIPHERTEXTS.encryptedSum }}</span>
                   </div>
                 </div>
+
+                <div class="divider"></div>
 
                 <div class="control-group">
                   <button 
                     @click="handlePublicDecrypt"
                     :disabled="isPublicDecrypting"
-                    class="btn btn-primary"
+                    class="btn-primary w-full"
                   >
-                    <svg class="lucide-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
-                      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    <svg v-if="isPublicDecrypting" class="icon animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                    </svg>
+                    <svg v-else class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                     </svg>
                     {{ isPublicDecrypting ? 'Decrypting...' : 'Test Public Decrypt' }}
                   </button>
                 </div>
 
                 <!-- Show decrypted results only after clicking -->
-                <div v-if="publicDecryptedCount !== null || publicDecryptedSum !== null" class="result-display">
-                  <h3 style="color: #ffd208; margin: 0 0 10px 0;">Public Decryption Results:</h3>
-                  <div v-if="publicDecryptedCount !== null" class="info-item">
-                    <span class="label">Decrypted Count:</span>
-                    <span class="result">{{ publicDecryptedCount }}</span>
+                <div v-if="publicDecryptedCount !== null || publicDecryptedSum !== null" class="result-section">
+                  <h3 class="result-title">Public Decryption Results:</h3>
+                  <div v-if="publicDecryptedCount !== null" class="info-card">
+                    <div class="info-row">
+                      <span class="info-label">Decrypted Count</span>
+                      <span class="info-value result">{{ publicDecryptedCount }}</span>
+                    </div>
                   </div>
-                  <div v-if="publicDecryptedSum !== null" class="info-item">
-                    <span class="label">Decrypted Sum:</span>
-                    <span class="result">{{ publicDecryptedSum }}</span>
+                  <div v-if="publicDecryptedSum !== null" class="info-card">
+                    <div class="info-row">
+                      <span class="info-label">Decrypted Sum</span>
+                      <span class="info-value result">{{ publicDecryptedSum }}</span>
+                    </div>
                   </div>
                   <div class="note">
                     These values were decrypted using public decryption (no user signature required)
                   </div>
-                  <div class="note" style="margin-top: 12px; font-size: 12px;">
+                  <div class="note">
                     <strong>Source:</strong> The encrypted count and sum ciphertexts are from the
                     <a 
                       href="https://sepolia.etherscan.io/address/0xb218c0a83fb718683ddbf97b56e01df3de3bfcf3#code" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      style="color: #ffd208; text-decoration: underline;"
+                      class="link"
                     >
                       ReviewCardsFHE.sol contract
                     </a>
@@ -296,7 +406,9 @@ const isConnected = ref(false)
 const fheInstance = ref<any>(null)
 const countHandle = ref<string>('')
 const decryptedCount = ref<number | null>(null)
-const isProcessing = ref(false)
+const isIncrementing = ref(false)
+const isDecrementing = ref(false)
+const isDecrypting = ref(false)
 const message = ref<string>('')
 const fhevmStatus = ref<'idle' | 'loading' | 'ready' | 'error'>('idle')
 const fhevmError = ref<string>('')
@@ -377,6 +489,9 @@ const disconnectWallet = () => {
   fheInstance.value = null
   countHandle.value = ''
   decryptedCount.value = null
+  isIncrementing.value = false
+  isDecrementing.value = false
+  isDecrypting.value = false
   fhevmStatus.value = 'idle'
   fhevmError.value = ''
   message.value = ''
@@ -406,6 +521,7 @@ const handleDecrypt = async () => {
   if (!countHandle.value || !window.ethereum) return
   
   try {
+    isDecrypting.value = true
     message.value = 'Decrypting with EIP-712 user decryption...'
     
     // Get signer for EIP-712 signature
@@ -419,6 +535,8 @@ const handleDecrypt = async () => {
   } catch (error) {
     console.error('Decryption failed:', error)
     message.value = 'Decryption failed'
+  } finally {
+    isDecrypting.value = false
   }
 }
 
@@ -456,7 +574,7 @@ const incrementCounter = async () => {
   if (!isConnected.value || !contractAddress.value || !window.ethereum || !fheInstance.value) return
   
   try {
-    isProcessing.value = true
+    isIncrementing.value = true
     message.value = 'Starting increment transaction...'
     
     const provider = new ethers.BrowserProvider(window.ethereum)
@@ -480,7 +598,7 @@ const incrementCounter = async () => {
     console.error('Increment failed:', error)
     message.value = 'Increment failed'
   } finally {
-    isProcessing.value = false
+    isIncrementing.value = false
   }
 }
 
@@ -489,7 +607,7 @@ const decrementCounter = async () => {
   if (!isConnected.value || !contractAddress.value || !window.ethereum || !fheInstance.value) return
   
   try {
-    isProcessing.value = true
+    isDecrementing.value = true
     message.value = 'Starting decrement transaction...'
     
     const provider = new ethers.BrowserProvider(window.ethereum)
@@ -513,449 +631,20 @@ const decrementCounter = async () => {
     console.error('Decrement failed:', error)
     message.value = 'Decrement failed'
   } finally {
-    isProcessing.value = false
+    isDecrementing.value = false
   }
 }
 </script>
 
-<style scoped>
-.app {
-  min-height: 100vh;
-  font-family: system-ui, -apple-system, sans-serif;
-  background-color: #000;
-  color: white;
+<style>
+@import './App.css';
+
+.animate-spin {
+  animation: spin 1s linear infinite;
 }
 
-/* FHEVM Header */
-.header {
-  background-color: #ffd208;
-  padding: 1.5rem 0;
-  border-bottom: 1px solid #000;
-  z-index: 999;
-}
-
-.header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-  text-align: center;
-}
-
-.app-title {
-  color: #000;
-  font-size: 2rem;
-  font-weight: bold;
-  margin: 0;
-}
-
-/* Main Content */
-.main-content {
-  background-color: #000;
-  min-height: calc(100vh - 120px);
-  padding: 2rem 0;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
-.main-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  margin-top: 2rem;
-}
-
-
-.section {
-  background-color: #1a1a1a;
-  margin-bottom: 2rem;
-  border-radius: 16px;
-  border: 1px solid #333;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.section-header {
-  background-color: #2a2a2a;
-  padding: 1.5rem 2rem;
-  border-bottom: 1px solid #333;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.section-header h2 {
-  color: #ffd208;
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
-.subtitle {
-  color: #888;
-  font-size: 0.9rem;
-  margin: 0.5rem 0 0 0;
-  font-weight: 400;
-}
-
-.status-badge {
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.status-badge.ready {
-  background-color: #4caf50;
-  color: white;
-}
-
-.status-badge.loading {
-  background-color: #ff9800;
-  color: white;
-}
-
-.status-badge.error {
-  background-color: #f44336;
-  color: white;
-}
-
-.status-badge.idle {
-  background-color: #666;
-  color: white;
-}
-
-.section-content {
-  padding: 2rem;
-}
-
-.section-content p {
-  color: #e0e0e0;
-  line-height: 1.6;
-  margin-bottom: 0.5rem;
-}
-
-.connection-prompt {
-  text-align: center;
-  padding: 2rem;
-}
-
-.connection-info {
-  display: grid;
-  gap: 1rem;
-}
-
-.info-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem;
-  background-color: #000;
-  border-radius: 8px;
-  border: 1px solid #333;
-}
-
-.label {
-  color: #888;
-  font-weight: 500;
-}
-
-.value, .address, .contract {
-  color: #e0e0e0;
-  font-family: monospace;
-  font-size: 0.9rem;
-}
-
-.address, .contract {
-  word-break: break-all;
-  max-width: 300px;
-  text-align: right;
-}
-
-.demo-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.control-group {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.handle-display, .result-display {
-  padding: 1rem;
-  background-color: #000;
-  border-radius: 8px;
-  border: 1px solid #333;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.handle {
-  font-family: monospace;
-  font-size: 0.8rem;
-  color: #888;
-  word-break: break-all;
-}
-
-.result {
-  color: #4caf50;
-  font-weight: bold;
-  font-size: 1.1rem;
-}
-
-.features-list {
-  display: grid;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.feature-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  background-color: #000;
-  border-radius: 8px;
-  border: 1px solid #333;
-}
-
-.checkmark {
-  color: #4caf50;
-  font-weight: bold;
-  font-size: 1.2rem;
-}
-
-.button-group {
-  margin: 1.5rem 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  align-items: center;
-}
-
-.btn {
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  font-size: 0.9rem;
-  min-width: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.icon {
-  font-size: 1rem;
-  font-weight: bold;
-}
-
-.btn:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-.btn-primary {
-  background-color: #007bff;
-  color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background-color: #0056b3;
-}
-
-.btn-success {
-  background-color: #28a745;
-  color: white;
-}
-
-.btn-success:hover:not(:disabled) {
-  background-color: #1e7e34;
-}
-
-.btn-warning {
-  background-color: #ffd208;
-  color: #000;
-}
-
-.btn-warning:hover:not(:disabled) {
-  background-color: #e6bc00;
-}
-
-.btn-danger {
-  background-color: #dc3545;
-  color: white;
-}
-
-.btn-danger:hover:not(:disabled) {
-  background-color: #c82333;
-}
-
-.connect-btn {
-  background-color: #ffd208;
-  color: #000;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s ease;
-  font-size: 0.9rem;
-  min-width: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.connect-btn:hover {
-  background-color: #e6bc00;
-}
-
-.connect-btn-header {
-  background-color: #ffd208;
-  color: #000;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s ease;
-  font-size: 0.85rem;
-  min-width: 100px;
-}
-
-.connect-btn-header:hover {
-  background-color: #e6bc00;
-}
-
-.disconnect-btn-header {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s ease;
-  font-size: 0.85rem;
-  min-width: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.disconnect-btn-header:hover {
-  background-color: #c82333;
-}
-
-.lucide-icon {
-  flex-shrink: 0;
-}
-
-.disconnect-section {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #333;
-}
-
-
-.result {
-  color: #4caf50;
-  font-weight: bold;
-  font-size: 1.1rem;
-}
-
-.message {
-  padding: 1rem;
-  background-color: #000;
-  border-radius: 8px;
-  margin-top: 1rem;
-  color: #e0e0e0;
-  border-left: 4px solid #ffd208;
-  border: 1px solid #333;
-}
-
-.success {
-  color: #4caf50;
-}
-
-.error {
-  color: #f44336;
-}
-
-.note {
-  font-size: 0.9em;
-  color: #888;
-  margin-top: 1rem;
-  padding: 1rem;
-  background-color: #000;
-  border-radius: 8px;
-  border: 1px solid #333;
-}
-
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    gap: 1rem;
-    padding: 0 1rem;
-  }
-  
-  .container {
-    padding: 0 1rem;
-  }
-  
-  .main-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  
-  .app-title {
-    font-size: 1.5rem;
-  }
-  
-  .section {
-    margin-bottom: 1rem;
-  }
-  
-  .section-header {
-    padding: 1rem;
-  }
-  
-  .section-content {
-    padding: 1rem;
-  }
-  
-  .button-group {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .btn {
-    width: 100%;
-    margin-right: 0;
-  }
-  
-  .demo-controls {
-    gap: 1rem;
-  }
-  
-  .control-group {
-    gap: 0.5rem;
-  }
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 </style>
