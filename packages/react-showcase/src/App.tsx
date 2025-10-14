@@ -75,7 +75,6 @@ function App() {
   const [isDecrypting, setIsDecrypting] = useState(false);
   const [message, setMessage] = useState<string>('');
   const [fhevmStatus, setFhevmStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
-  const [fhevmError, setFhevmError] = useState<string>('');
 
   // Network switching state
   const [isSwitchingNetwork, setIsSwitchingNetwork] = useState(false);
@@ -97,7 +96,6 @@ function App() {
   // Initialize FHEVM
   const initializeFhevm = async () => {
     setFhevmStatus('loading');
-    setFhevmError('');
     
     try {
       await initializeFheInstance();
@@ -105,7 +103,6 @@ function App() {
       console.log('✅ FHEVM initialized for React!');
     } catch (error) {
       setFhevmStatus('error');
-      setFhevmError(error instanceof Error ? error.message : 'Unknown error');
       console.error('FHEVM initialization failed:', error);
     }
   };
@@ -438,7 +435,6 @@ function App() {
                   setIsDecrypting(false);
                   setIsProcessing(false);
                   setFhevmStatus('idle');
-                  setFhevmError('');
                   setMessage('');
                   setNetworkError('');
                   setIsSwitchingNetwork(false);
