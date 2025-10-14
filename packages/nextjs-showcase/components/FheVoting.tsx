@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import { initializeFheInstance, createEncryptedInput } from '@fhevm-sdk';
+import { createEncryptedInput } from '@fhevm-sdk';
 
 // Contract ABI for SimpleVoting_uint32
 const VOTING_CONTRACT_ABI = [
@@ -161,7 +161,7 @@ const FheVoting = ({
   isConnected,
   isInitialized,
   onMessage
-}) => {
+}: FheVotingProps) => {
   const [sessions, setSessions] = useState<VotingSession[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isVoting, setIsVoting] = useState(false);

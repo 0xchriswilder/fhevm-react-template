@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { createEncryptedInput, publicDecrypt } from '@fhevm-sdk';
 
@@ -183,7 +183,7 @@ export default function FheRatings({ account, chainId, isConnected, fhevmStatus,
   }, [cards]);
 
   // Load contract data
-  const loadContractData = async () => {
+  const loadContractData = useCallback(async () => {
     if (!isConnected || !window.ethereum) return;
 
     try {
@@ -200,7 +200,7 @@ export default function FheRatings({ account, chainId, isConnected, fhevmStatus,
     } catch (error) {
       console.error('Failed to load contract data:', error);
     }
-  };
+  }, [isConnected]);
 
   // Load cards from contract
   const loadCards = async () => {
@@ -383,7 +383,7 @@ export default function FheRatings({ account, chainId, isConnected, fhevmStatus,
     if (isConnected) {
       loadContractData();
     }
-  }, [isConnected]);
+  }, [isConnected, loadContractData]);
 
   if (!isConnected || fhevmStatus !== 'ready') {
     return null;

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
-import { initializeFheInstance, createEncryptedInput } from '@fhevm-sdk';
+import { createEncryptedInput } from '@fhevm-sdk';
 
 // Contract ABI for SimpleVoting_uint32
 const VOTING_CONTRACT_ABI = [
@@ -145,13 +145,6 @@ interface VotingSession {
   canRequestTally: boolean;
 }
 
-interface FheVotingProps {
-  account: string;
-  chainId: number;
-  isConnected: boolean;
-  fhevmStatus: 'idle' | 'loading' | 'ready' | 'error';
-  onMessage: (message: string) => void;
-}
 
 const FheVoting = ({
   account,
@@ -168,19 +161,11 @@ const FheVoting = ({
   const [newSessionDuration, setNewSessionDuration] = useState(60); // 1 minute default
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [sessionTopic, setSessionTopic] = useState('');
-  const [cachedSessions, setCachedSessions] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const CARDS_PER_PAGE = 2;
 
-  // Load sessions on component mount and when account changes
-  useEffect(() => {
-    if (isConnected && fhevmStatus === 'ready') {
-      loadSessions();
-    }
-  }, [isConnected, fhevmStatus, account]);
-
   // Load all voting sessions
-  const loadSessions = async () => {
+  const loadSessions = useCallback(async () => {
     if (!window.ethereum) return;
 
     try {
@@ -222,7 +207,14 @@ const FheVoting = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [onMessage, account]);
+
+  // Load sessions on component mount and when account changes
+  useEffect(() => {
+    if (isConnected && fhevmStatus === 'ready') {
+      loadSessions();
+    }
+  }, [isConnected, fhevmStatus, account, loadSessions]);
 
   // Create a new voting session
   const createSession = async () => {
@@ -650,14 +642,6 @@ const FheVoting = ({
                 <button
                   onClick={async () => {
                     if (sessionTopic.trim()) {
-                      // Cache the session topic
-                      const newCachedSession = {
-                        id: Date.now(),
-                        topic: sessionTopic,
-                        duration: newSessionDuration,
-                        createdAt: new Date().toISOString()
-                      };
-                      setCachedSessions(prev => [...prev, newCachedSession]);
                       
                       await createSession();
                       setSessionTopic('');
