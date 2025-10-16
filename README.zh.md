@@ -90,20 +90,28 @@ fhevm-react-template/
 npx create-fhevm-react my-app
 cd my-app
 npm install
+# 复制FHEVM SDK用于生产部署
+cp node_modules/@fhevm-sdk/dist/* src/lib/
 npm start
 
 # Next.js
 npx create-fhevm-nextjs my-app
 cd my-app
 npm install
+# 复制FHEVM SDK用于生产部署
+cp node_modules/@fhevm-sdk/dist/* src/lib/
 npm run dev
 
 # Vue
 npx create-fhevm-vue my-app
 cd my-app
 npm install
+# 复制FHEVM SDK用于生产部署
+cp node_modules/@fhevm-sdk/dist/* src/lib/
 npm run dev
 ```
+
+**📝 注意：** 将FHEVM SDK文件复制到 `src/lib/` 以确保生产部署兼容性。在组件中将导入从 `@fhevm-sdk` 更新为 `./lib/fhevm`。
 
 ### **选项2：开发环境**
 
