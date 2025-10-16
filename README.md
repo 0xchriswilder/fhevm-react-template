@@ -2,6 +2,21 @@
 
 A framework-agnostic frontend toolkit that helps developers run confidential dApps with ease. Built for the Zama Bounty Program - Universal FHEVM SDK Challenge.
 
+## 🌐 **Live Examples**
+
+All examples are running with **real FHEVM interactions** on Sepolia testnet:
+
+- **![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) React Showcase:** [https://react-showcase-1738.up.railway.app/](https://react-showcase-1738.up.railway.app/)
+- **![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white) Next.js Showcase:** [https://nextjs-showcase-1661.up.railway.app/](https://nextjs-showcase-1661.up.railway.app/)
+- **![Vue.js](https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vue.js&logoColor=4FC08D) Vue Showcase:** [https://vue-showcase-2780.up.railway.app/](https://vue-showcase-2780.up.railway.app/)
+
+**Contract Details:**
+- **FHE Counter Contract:** `0xead137D42d2E6A6a30166EaEf97deBA1C3D1954e`
+- **Ratings Contract:** `0xcA2430F1B112EC25cF6b6631bb40039aCa0C86e0`
+- **Voting Contract:** `0x7294A541222ce449faa2B8A7214C571b0fCAb52E`
+- **Network:** Sepolia testnet (Chain ID: 11155111)
+- **Features:** Real encryption, decryption, contract interactions
+
 ## 🌍 **Languages / Langues / 语言**
 [![English](https://img.shields.io/badge/English-🇺🇸-blue)](README.md)
 [![Français](https://img.shields.io/badge/Français-🇫🇷-red)](README.fr.md)
@@ -456,20 +471,6 @@ pnpm install
 pnpm sdk:build
 ```
 
-## 🌐 **Live Examples**
-
-All examples are running with **real FHEVM interactions** on Sepolia testnet:
-
-- **![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) React Showcase:** [https://react-showcase-1738.up.railway.app/](https://react-showcase-1738.up.railway.app/)
-- **![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white) Next.js Showcase:** [https://nextjs-showcase-1661.up.railway.app/](https://nextjs-showcase-1661.up.railway.app/)
-- **![Vue.js](https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vue.js&logoColor=4FC08D) Vue Showcase:** [https://vue-showcase-2780.up.railway.app/](https://vue-showcase-2780.up.railway.app/)
-
-**Contract Details:**
-- **FHE Counter Contract:** `0xead137D42d2E6A6a30166EaEf97deBA1C3D1954e`
-- **Ratings Contract:** `0xcA2430F1B112EC25cF6b6631bb40039aCa0C86e0`
-- **Voting Contract:** `0x7294A541222ce449faa2B8A7214C571b0fCAb52E`
-- **Network:** Sepolia testnet (Chain ID: 11155111)
-- **Features:** Real encryption, decryption, contract interactions
 
 ## 📋 **Requirements**
 

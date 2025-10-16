@@ -1,6 +1,23 @@
 # 🔐 通用FHEVM   SDK
 
 一个框架无关的前端工具包，帮助开发者轻松运行机密dApp。为Zama赏金计划 - 通用FHEVM SDK挑战而构建。
+
+## 🌐 **实时示例**
+
+所有示例都在Sepolia测试网上运行**真实的FHEVM交互**：
+
+- **![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) React Showcase：** [https://react-showcase-1738.up.railway.app/](https://react-showcase-1738.up.railway.app/)
+- **![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white) Next.js Showcase：** [https://nextjs-showcase-1661.up.railway.app/](https://nextjs-showcase-1661.up.railway.app/)
+- **![Vue.js](https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vue.js&logoColor=4FC08D) Vue Showcase：** [https://vue-showcase-2780.up.railway.app/](https://vue-showcase-2780.up.railway.app/)
+
+**合约详情：**
+
+- **FHE计数器合约：** `0xead137D42d2E6A6a30166EaEf97deBA1C3D1954e`
+- **评分合约：** `0xcA2430F1B112EC25cF6b6631bb40039aCa0C86e0`
+- **投票合约：** `0x7294A541222ce449faa2B8A7214C571b0fCAb52E`
+- **网络：** Sepolia测试网 (链ID: 11155111)
+- **功能：** 真实加密、解密、合约交互
+
 ## 🌍 **语言 / Languages / Langues**
 
 
@@ -261,22 +278,6 @@ npm run dev
 - ✅ **TypeScript支持** - 完整的类型安全
 - ✅ **生产就绪** - 为部署优化
 - ✅ **完整的Hardhat环境** - 包含智能合约开发
-
-## 🌐 **实时示例**
-
-所有示例都在Sepolia测试网上运行**真实的FHEVM交互**：
-
-- **![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) React Showcase：** [https://react-showcase-1738.up.railway.app/](https://react-showcase-1738.up.railway.app/)
-- **![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white) Next.js Showcase：** [https://nextjs-showcase-1661.up.railway.app/](https://nextjs-showcase-1661.up.railway.app/)
-- **![Vue.js](https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vue.js&logoColor=4FC08D) Vue Showcase：** [https://vue-showcase-2780.up.railway.app/](https://vue-showcase-2780.up.railway.app/)
-
-**合约详情：**
-
-- **FHE计数器合约：** `0xead137D42d2E6A6a30166EaEf97deBA1C3D1954e`
-- **评分合约：** `0xcA2430F1B112EC25cF6b6631bb40039aCa0C86e0`
-- **投票合约：** `0x7294A541222ce449faa2B8A7214C571b0fCAb52E`
-- **网络：** Sepolia测试网 (链ID: 11155111)
-- **功能：** 真实加密、解密、合约交互
 
 ## 📋 **要求**
 

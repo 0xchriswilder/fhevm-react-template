@@ -2,6 +2,21 @@
 
 Une boîte à outils frontend universelle pour construire des dApps confidentielles, supportant React, Next.js, Vue, Node.js et Vanilla JS.
 
+## 🌐 **Exemples Live**
+
+Tous les exemples fonctionnent avec **des interactions FHEVM réelles** sur le testnet Sepolia :
+
+- **![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) React Showcase :** [https://react-showcase-1738.up.railway.app/](https://react-showcase-1738.up.railway.app/)
+- **![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white) Next.js Showcase :** [https://nextjs-showcase-1661.up.railway.app/](https://nextjs-showcase-1661.up.railway.app/)
+- **![Vue.js](https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vue.js&logoColor=4FC08D) Vue Showcase :** [https://vue-showcase-2780.up.railway.app/](https://vue-showcase-2780.up.railway.app/)
+
+**Détails du Contrat :**
+- **Contrat FHE Counter :** `0xead137D42d2E6A6a30166EaEf97deBA1C3D1954e`
+- **Contrat Ratings :** `0xcA2430F1B112EC25cF6b6631bb40039aCa0C86e0`
+- **Contrat Voting :** `0x7294A541222ce449faa2B8A7214C571b0fCAb52E`
+- **Réseau :** Testnet Sepolia (Chain ID: 11155111)
+- **Fonctionnalités :** Chiffrement réel, déchiffrement, interactions de contrat
+
 ## 🌍 **Langues / Languages / 语言**
 [![English](https://img.shields.io/badge/English-🇺🇸-blue)](README.md)
 [![Français](https://img.shields.io/badge/Français-🇫🇷-red)](README.fr.md)
@@ -235,21 +250,6 @@ npm run dev
 - ✅ **Support TypeScript** - Sécurité de type complète
 - ✅ **Prêt pour la Production** - Optimisé pour le déploiement
 - ✅ **Environnement Hardhat Complet** - Développement de smart contract inclus
-
-## 🌐 **Exemples Live**
-
-Tous les exemples fonctionnent avec **des interactions FHEVM réelles** sur le testnet Sepolia :
-
-- **![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) React Showcase :** [https://react-showcase-1738.up.railway.app/](https://react-showcase-1738.up.railway.app/)
-- **![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white) Next.js Showcase :** [https://nextjs-showcase-1661.up.railway.app/](https://nextjs-showcase-1661.up.railway.app/)
-- **![Vue.js](https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vue.js&logoColor=4FC08D) Vue Showcase :** [https://vue-showcase-2780.up.railway.app/](https://vue-showcase-2780.up.railway.app/)
-
-**Détails du Contrat :**
-- **Contrat FHE Counter :** `0xead137D42d2E6A6a30166EaEf97deBA1C3D1954e`
-- **Contrat Ratings :** `0xcA2430F1B112EC25cF6b6631bb40039aCa0C86e0`
-- **Contrat Voting :** `0x7294A541222ce449faa2B8A7214C571b0fCAb52E`
-- **Réseau :** Testnet Sepolia (Chain ID: 11155111)
-- **Fonctionnalités :** Chiffrement réel, déchiffrement, interactions de contrat
 
 ## 📋 **Exigences**
 
