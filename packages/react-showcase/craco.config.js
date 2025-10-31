@@ -59,17 +59,10 @@ module.exports = {
       };
 
       // Ignore Vue imports in React showcase (Vue adapters are not used)
+      const path = require('path');
+      
+      // Ignore vue imports from @fhevm-sdk
       webpackConfig.plugins = webpackConfig.plugins || [];
-      
-      // Replace Vue adapter with empty module for React builds
-      webpackConfig.plugins.push(
-        new webpack.NormalModuleReplacementPlugin(
-          /@fhevm-sdk\/dist\/adapters\/vue\.js$/,
-          require.resolve('./src/vue-stub.js')
-        )
-      );
-      
-      // Also ignore vue imports
       webpackConfig.plugins.push(
         new webpack.IgnorePlugin({
           resourceRegExp: /^vue$/,
@@ -87,8 +80,15 @@ module.exports = {
       // Ensure proper module resolution order to prevent multiple React instances
       // Don't use aliases for React as it breaks subpath imports (react/jsx-dev-runtime, react-dom/client)
       // Instead, ensure node_modules resolution prioritizes the app's node_modules
-      const path = require('path');
       webpackConfig.resolve = webpackConfig.resolve || {};
+      
+      // Alias vue to empty module to prevent resolution errors from @fhevm-sdk
+      // This ensures any 'vue' import resolves to an empty stub instead of failing
+      webpackConfig.resolve.alias = {
+        ...webpackConfig.resolve.alias,
+        'vue': path.resolve(__dirname, 'src/vue-empty.js')
+      };
+      
       webpackConfig.resolve.modules = [
         path.resolve(__dirname, 'node_modules'), // Prioritize app's node_modules
         ...(webpackConfig.resolve.modules || ['node_modules']),
