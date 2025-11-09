@@ -39,7 +39,6 @@ export interface SimpleVoting_uint32Interface extends Interface {
 
   getEvent(
     nameOrSignatureOrTopic:
-      | "DecryptionFulfilled"
       | "SessionCreated"
       | "SessionResolved"
       | "TallyRevealRequested"
@@ -106,18 +105,6 @@ export interface SimpleVoting_uint32Interface extends Interface {
   decodeFunctionResult(functionFragment: "vote", data: BytesLike): Result;
 }
 
-export namespace DecryptionFulfilledEvent {
-  export type InputTuple = [requestID: BigNumberish];
-  export type OutputTuple = [requestID: bigint];
-  export interface OutputObject {
-    requestID: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
 export namespace SessionCreatedEvent {
   export type InputTuple = [
     sessionId: BigNumberish,
@@ -163,11 +150,20 @@ export namespace SessionResolvedEvent {
 }
 
 export namespace TallyRevealRequestedEvent {
-  export type InputTuple = [sessionId: BigNumberish, requestId: BigNumberish];
-  export type OutputTuple = [sessionId: bigint, requestId: bigint];
+  export type InputTuple = [
+    sessionId: BigNumberish,
+    yesVotesHandle: BytesLike,
+    noVotesHandle: BytesLike
+  ];
+  export type OutputTuple = [
+    sessionId: bigint,
+    yesVotesHandle: string,
+    noVotesHandle: string
+  ];
   export interface OutputObject {
     sessionId: bigint;
-    requestId: bigint;
+    yesVotesHandle: string;
+    noVotesHandle: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -269,7 +265,7 @@ export interface SimpleVoting_uint32 extends BaseContract {
 
   resolveTallyCallback: TypedContractMethod<
     [
-      requestId: BigNumberish,
+      sessionId: BigNumberish,
       cleartexts: BytesLike,
       decryptionProof: BytesLike
     ],
@@ -280,7 +276,7 @@ export interface SimpleVoting_uint32 extends BaseContract {
   sessions: TypedContractMethod<
     [arg0: BigNumberish],
     [
-      [string, bigint, string, string, boolean, bigint, bigint, bigint] & {
+      [string, bigint, string, string, boolean, bigint, bigint, boolean] & {
         creator: string;
         endTime: bigint;
         yesVotes: string;
@@ -288,7 +284,7 @@ export interface SimpleVoting_uint32 extends BaseContract {
         resolved: boolean;
         revealedYes: bigint;
         revealedNo: bigint;
-        decryptionRequestId: bigint;
+        revealRequested: boolean;
       }
     ],
     "view"
@@ -342,7 +338,7 @@ export interface SimpleVoting_uint32 extends BaseContract {
     nameOrSignature: "resolveTallyCallback"
   ): TypedContractMethod<
     [
-      requestId: BigNumberish,
+      sessionId: BigNumberish,
       cleartexts: BytesLike,
       decryptionProof: BytesLike
     ],
@@ -354,7 +350,7 @@ export interface SimpleVoting_uint32 extends BaseContract {
   ): TypedContractMethod<
     [arg0: BigNumberish],
     [
-      [string, bigint, string, string, boolean, bigint, bigint, bigint] & {
+      [string, bigint, string, string, boolean, bigint, bigint, boolean] & {
         creator: string;
         endTime: bigint;
         yesVotes: string;
@@ -362,7 +358,7 @@ export interface SimpleVoting_uint32 extends BaseContract {
         resolved: boolean;
         revealedYes: bigint;
         revealedNo: bigint;
-        decryptionRequestId: bigint;
+        revealRequested: boolean;
       }
     ],
     "view"
@@ -375,13 +371,6 @@ export interface SimpleVoting_uint32 extends BaseContract {
     "nonpayable"
   >;
 
-  getEvent(
-    key: "DecryptionFulfilled"
-  ): TypedContractEvent<
-    DecryptionFulfilledEvent.InputTuple,
-    DecryptionFulfilledEvent.OutputTuple,
-    DecryptionFulfilledEvent.OutputObject
-  >;
   getEvent(
     key: "SessionCreated"
   ): TypedContractEvent<
@@ -412,17 +401,6 @@ export interface SimpleVoting_uint32 extends BaseContract {
   >;
 
   filters: {
-    "DecryptionFulfilled(uint256)": TypedContractEvent<
-      DecryptionFulfilledEvent.InputTuple,
-      DecryptionFulfilledEvent.OutputTuple,
-      DecryptionFulfilledEvent.OutputObject
-    >;
-    DecryptionFulfilled: TypedContractEvent<
-      DecryptionFulfilledEvent.InputTuple,
-      DecryptionFulfilledEvent.OutputTuple,
-      DecryptionFulfilledEvent.OutputObject
-    >;
-
     "SessionCreated(uint256,address,uint256)": TypedContractEvent<
       SessionCreatedEvent.InputTuple,
       SessionCreatedEvent.OutputTuple,
@@ -445,7 +423,7 @@ export interface SimpleVoting_uint32 extends BaseContract {
       SessionResolvedEvent.OutputObject
     >;
 
-    "TallyRevealRequested(uint256,uint256)": TypedContractEvent<
+    "TallyRevealRequested(uint256,bytes32,bytes32)": TypedContractEvent<
       TallyRevealRequestedEvent.InputTuple,
       TallyRevealRequestedEvent.OutputTuple,
       TallyRevealRequestedEvent.OutputObject

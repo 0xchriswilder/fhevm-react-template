@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST="{}"
+self.__REACT_LOADABLE_MANIFEST="{\"..\\\\fhevm-sdk\\\\dist\\\\core\\\\fhevm.js -> ethers\":{\"id\":\"..\\\\fhevm-sdk\\\\dist\\\\core\\\\fhevm.js -> ethers\",\"files\":[\"static/chunks/_app-pages-browser_node_modules_pnpm_ethers_6_15_0_bufferutil_4_0_9_utf-8-validate_5_0_10_nod-c3f343.js\"]}}"

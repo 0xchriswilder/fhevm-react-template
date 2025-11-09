@@ -19,11 +19,13 @@ All examples are running with **real FHEVM interactions** on Sepolia testnet:
 - **![Vue.js](https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vue.js&logoColor=4FC08D) Vue Showcase:** [https://vue-showcase-2780.up.railway.app/](https://vue-showcase-2780.up.railway.app/)
 - **![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white) Node.js Showcase:** [packages/node-showcase/](packages/node-showcase/)
 
-**Contract Details:**
-- **FHE Counter Contract:** `0xead137D42d2E6A6a30166EaEf97deBA1C3D1954e`
-- **Ratings Contract:** `0xcA2430F1B112EC25cF6b6631bb40039aCa0C86e0`
-- **Voting Contract:** `0x7294A541222ce449faa2B8A7214C571b0fCAb52E`
+**Contract Details (FHEVM 0.9.0):**
+- **FHE Counter Contract:** `0x1b45fa7b7766fb27A36fBB0cfb02ea904214Cc75`
+- **Ratings Contract:** `0x0382053b0eae2A4A45C4A668505E2030913f559e`
+- **Voting Contract:** `0x4D15cA56c8414CF1bEF42B63B0525aFc3751D2d1`
 - **Network:** Sepolia testnet (Chain ID: 11155111)
+- **FHEVM Version:** 0.9.0
+- **Relayer SDK:** 0.3.0-5
 
 ## 🌍 **Languages / Langues / 语言**
 [![English](https://img.shields.io/badge/English-🇺🇸-blue)](README.md)
@@ -234,13 +236,30 @@ function MyComponent() {
   // Encryption
   const { encrypt, isEncrypting, error: encryptError } = useEncrypt();
   
-  // Decryption
-  const { decrypt, publicDecrypt, isDecrypting, error: decryptError } = useDecrypt();
+  // Decryption (FHEVM 0.9.0)
+  const { decrypt, publicDecrypt, decryptMultiple, isDecrypting, error: decryptError } = useDecrypt();
   
   // Usage example
   const handleIncrement = async () => {
     const encrypted = await encrypt(contractAddress, address, 1);
-    await contract.increment(encrypted.handles[0], encrypted.inputProof);
+    await contract.increment(encrypted.encryptedData, encrypted.proof);
+  };
+  
+  // Self-relaying decryption example (for voting)
+  const handleTallyReveal = async (sessionId) => {
+    const tx = await contract.requestTallyReveal(sessionId);
+    const receipt = await tx.wait();
+    const event = receipt.logs.find(log => {
+      const parsed = contract.interface.parseLog(log);
+      return parsed?.name === 'TallyRevealRequested';
+    });
+    const { yesVotesHandle, noVotesHandle } = contract.interface.parseLog(event).args;
+    const { cleartexts, decryptionProof, values } = await decryptMultiple(
+      contractAddress,
+      signer,
+      [yesVotesHandle, noVotesHandle]
+    );
+    await contract.resolveTallyCallback(sessionId, cleartexts, decryptionProof);
   };
   
   return (
@@ -269,13 +288,13 @@ const { status, initialize, isInitialized } = useFhevmVue();
 // Encryption
 const { encrypt, isEncrypting, error: encryptError } = useEncryptVue();
 
-// Decryption
-const { decrypt, publicDecrypt, isDecrypting, error: decryptError } = useDecryptVue();
+// Decryption (FHEVM 0.9.0)
+const { decrypt, publicDecrypt, decryptMultiple, isDecrypting, error: decryptError } = useDecryptVue();
 
 // Usage example
 const handleIncrement = async () => {
   const encrypted = await encrypt.value(contractAddress, address.value, 1);
-  await contract.increment(encrypted.handles[0], encrypted.inputProof);
+  await contract.increment(encrypted.encryptedData, encrypted.proof);
 };
 </script>
 
@@ -578,16 +597,18 @@ Tests run in Hardhat's FHEVM mock environment, allowing fast local testing witho
 - Excellent IDE support
 - Comprehensive type definitions
 
-### **✅ Real FHEVM Operations**
+### **✅ Real FHEVM Operations (0.9.0)**
 - EIP-712 signature-based decryption
 - Public decryption support
+- Self-relaying decryption pattern (event-driven)
+- Multiple handle decryption (`decryptMultiple`)
 - Encrypted transaction execution
 - No mocks - all real blockchain interactions
 
-### **✅ Multiple Demo Scenarios**
-- **Counter Demo:** Increment/decrement with private decryption
+### **✅ Multiple Demo Scenarios (FHEVM 0.9.0)**
+- **Counter Demo:** Increment/decrement with EIP-712 user decryption
 - **Ratings Demo:** Encrypted ratings with public decryption
-- **Voting Demo:** Encrypted voting with tally reveal
+- **Voting Demo:** Encrypted voting with self-relaying decryption (event-driven tally reveal)
 
 ## 🎯 **Usage Examples**
 

@@ -2,9 +2,9 @@
 pragma solidity ^0.8.24;
 
 import { FHE, euint32, externalEuint32 } from "@fhevm/solidity/lib/FHE.sol";
-import { SepoliaConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
+import { EthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
 
-contract ReviewCardsFHE is SepoliaConfig {
+contract ReviewCardsFHE is EthereumConfig {
     // Struct to store a single review card
     struct ReviewCard {
         uint256 id;                  // Unique card ID

@@ -8,7 +8,8 @@ import {
   getFheInstance, 
   decryptValue,
   createEncryptedInput,
-  publicDecrypt
+  publicDecrypt,
+  decryptMultipleHandles
 } from '../core/index.js';
 import { ethers } from 'ethers';
 
@@ -88,6 +89,19 @@ export class FhevmNode {
     return publicDecrypt(handle);
   }
 
+  async decryptMultiple(contractAddress: string, handles: string[], signer?: any) {
+    if (!this.isReady) throw new Error('FHEVM not initialized');
+    
+    // Use provided signer or default wallet
+    const signerToUse = signer || this.wallet;
+    if (!signerToUse) {
+      throw new Error('No signer available. Provide a signer or initialize with privateKey');
+    }
+    
+    console.log(`🔓 Decrypting ${handles.length} handles for contract ${contractAddress}`);
+    return decryptMultipleHandles(contractAddress, signerToUse, handles);
+  }
+
   /**
    * Create a contract instance for server-side interactions
    */
@@ -100,6 +114,7 @@ export class FhevmNode {
 
   /**
    * Execute encrypted transaction
+   * Supports both old format (encryptedData, proof) and new FHEVM 0.9.0 format (handles, inputProof)
    */
   async executeEncryptedTransaction(
     contract: ethers.Contract,
@@ -112,9 +127,39 @@ export class FhevmNode {
     console.log(`📝 Executing encrypted transaction: ${methodName}`);
     
     try {
+      // Handle new FHEVM 0.9.0 format (handles array + inputProof)
+      let handle: any, proof: any;
+      
+      if (encryptedData && typeof encryptedData === 'object') {
+        if (encryptedData.handles && Array.isArray(encryptedData.handles) && encryptedData.handles.length > 0) {
+          // New format: { handles: [Uint8Array], inputProof: Uint8Array }
+          handle = encryptedData.handles[0];
+          proof = encryptedData.inputProof;
+        } else if (encryptedData.encryptedData && encryptedData.proof) {
+          // Old format: { encryptedData: any, proof: any }
+          handle = encryptedData.encryptedData;
+          proof = encryptedData.proof;
+        } else {
+          // Fallback: assume it's the handle itself
+          handle = encryptedData;
+          proof = encryptedData;
+        }
+      } else {
+        handle = encryptedData;
+        proof = encryptedData;
+      }
+      
+      // Convert Uint8Array to hex string if needed
+      if (handle instanceof Uint8Array) {
+        handle = ethers.hexlify(handle);
+      }
+      if (proof instanceof Uint8Array) {
+        proof = ethers.hexlify(proof);
+      }
+      
       const tx = await contract[methodName](
-        encryptedData.encryptedData,
-        encryptedData.proof,
+        handle,
+        proof,
         ...additionalParams
       );
       

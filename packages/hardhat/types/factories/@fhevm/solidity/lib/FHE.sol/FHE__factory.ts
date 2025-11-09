@@ -17,31 +17,8 @@ import type {
 const _abi = [
   {
     inputs: [],
-    name: "HandlesAlreadySavedForRequestID",
-    type: "error",
-  },
-  {
-    inputs: [],
     name: "InvalidKMSSignatures",
     type: "error",
-  },
-  {
-    inputs: [],
-    name: "NoHandleFoundForRequestID",
-    type: "error",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "requestID",
-        type: "uint256",
-      },
-    ],
-    name: "DecryptionFulfilled",
-    type: "event",
   },
 ] as const;
 

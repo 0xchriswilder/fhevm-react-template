@@ -18,17 +18,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.EthereumConfig__factory>;
     getContractFactory(
-      name: "SepoliaConfig",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.SepoliaConfig__factory>;
-    getContractFactory(
       name: "FHE",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FHE__factory>;
-    getContractFactory(
-      name: "IDecryptionOracle",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IDecryptionOracle__factory>;
     getContractFactory(
       name: "IKMSVerifier",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -64,20 +56,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.EthereumConfig>;
     getContractAt(
-      name: "SepoliaConfig",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.SepoliaConfig>;
-    getContractAt(
       name: "FHE",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.FHE>;
-    getContractAt(
-      name: "IDecryptionOracle",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IDecryptionOracle>;
     getContractAt(
       name: "IKMSVerifier",
       address: string | ethers.Addressable,
@@ -119,17 +101,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.EthereumConfig>;
     deployContract(
-      name: "SepoliaConfig",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.SepoliaConfig>;
-    deployContract(
       name: "FHE",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.FHE>;
-    deployContract(
-      name: "IDecryptionOracle",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IDecryptionOracle>;
     deployContract(
       name: "IKMSVerifier",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -165,20 +139,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.EthereumConfig>;
     deployContract(
-      name: "SepoliaConfig",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.SepoliaConfig>;
-    deployContract(
       name: "FHE",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.FHE>;
-    deployContract(
-      name: "IDecryptionOracle",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IDecryptionOracle>;
     deployContract(
       name: "IKMSVerifier",
       args: any[],

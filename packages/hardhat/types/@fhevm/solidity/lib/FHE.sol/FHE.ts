@@ -3,10 +3,8 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumberish,
   FunctionFragment,
   Interface,
-  EventFragment,
   ContractRunner,
   ContractMethod,
   Listener,
@@ -15,25 +13,10 @@ import type {
   TypedContractEvent,
   TypedDeferredTopicFilter,
   TypedEventLog,
-  TypedLogDescription,
   TypedListener,
 } from "../../../../common";
 
-export interface FHEInterface extends Interface {
-  getEvent(nameOrSignatureOrTopic: "DecryptionFulfilled"): EventFragment;
-}
-
-export namespace DecryptionFulfilledEvent {
-  export type InputTuple = [requestID: BigNumberish];
-  export type OutputTuple = [requestID: bigint];
-  export interface OutputObject {
-    requestID: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
+export interface FHEInterface extends Interface {}
 
 export interface FHE extends BaseContract {
   connect(runner?: ContractRunner | null): FHE;
@@ -82,24 +65,5 @@ export interface FHE extends BaseContract {
     key: string | FunctionFragment
   ): T;
 
-  getEvent(
-    key: "DecryptionFulfilled"
-  ): TypedContractEvent<
-    DecryptionFulfilledEvent.InputTuple,
-    DecryptionFulfilledEvent.OutputTuple,
-    DecryptionFulfilledEvent.OutputObject
-  >;
-
-  filters: {
-    "DecryptionFulfilled(uint256)": TypedContractEvent<
-      DecryptionFulfilledEvent.InputTuple,
-      DecryptionFulfilledEvent.OutputTuple,
-      DecryptionFulfilledEvent.OutputObject
-    >;
-    DecryptionFulfilled: TypedContractEvent<
-      DecryptionFulfilledEvent.InputTuple,
-      DecryptionFulfilledEvent.OutputTuple,
-      DecryptionFulfilledEvent.OutputObject
-    >;
-  };
+  filters: {};
 }

@@ -232,10 +232,11 @@ Encryption operations:
 - `isEncrypting` (computed) - Encryption in progress
 - `error` (computed) - Encryption errors
 
-### **`useDecryptVue()`**
+### **`useDecryptVue()`** (FHEVM 0.9.0)
 Decryption operations:
 - `decrypt` (computed function) - User decryption (EIP-712)
 - `publicDecrypt` (computed function) - Public decryption
+- `decryptMultiple` (computed function) - Decrypt multiple handles for self-relaying pattern (returns `{ cleartexts, decryptionProof, values }`)
 - `isDecrypting` (computed) - Decryption in progress
 - `error` (computed) - Decryption errors
 
@@ -251,7 +252,9 @@ Decryption operations:
 ## 🌐 **Live Demo**
 
 - **URL:** http://localhost:3003
-- **Contract:** `0xead137D42d2E6A6a30166EaEf97deBA1C3D1954e`
+- **FHE Counter Contract:** `0x1b45fa7b7766fb27A36fBB0cfb02ea904214Cc75` (FHEVM 0.9.0)
+- **Ratings Contract:** `0x0382053b0eae2A4A45C4A668505E2030913f559e` (FHEVM 0.9.0)
+- **Voting Contract:** `0x4D15cA56c8414CF1bEF42B63B0525aFc3751D2d1` (FHEVM 0.9.0)
 - **Network:** Sepolia testnet (Chain ID: 11155111)
 
 ## 📱 **Usage Flow**

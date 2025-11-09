@@ -3,7 +3,7 @@
  */
 
 import { useState, useCallback } from 'react';
-import { decryptValue, publicDecrypt } from '../core/index.js';
+import { decryptValue, publicDecrypt, decryptMultipleHandles } from '../core/index.js';
 
 export function useDecrypt() {
   const [isDecrypting, setIsDecrypting] = useState(false);
@@ -39,9 +39,25 @@ export function useDecrypt() {
     }
   }, []);
 
+  const decryptMultiple = useCallback(async (contractAddress: string, signer: any, handles: string[]) => {
+    setIsDecrypting(true);
+    setError('');
+    
+    try {
+      const result = await decryptMultipleHandles(contractAddress, signer, handles);
+      return result;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Multiple decryption failed');
+      throw err;
+    } finally {
+      setIsDecrypting(false);
+    }
+  }, []);
+
   return {
     decrypt,
     publicDecrypt: publicDecryptValue,
+    decryptMultiple,
     isDecrypting,
     error,
   };

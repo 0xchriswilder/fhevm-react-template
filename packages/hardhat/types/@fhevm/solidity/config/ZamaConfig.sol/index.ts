@@ -2,4 +2,3 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { EthereumConfig } from "./EthereumConfig";
-export type { SepoliaConfig } from "./SepoliaConfig";

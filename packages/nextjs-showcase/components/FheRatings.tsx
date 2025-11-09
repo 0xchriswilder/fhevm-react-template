@@ -5,7 +5,7 @@ import { ethers } from 'ethers';
 import { useEncrypt, useDecrypt } from '@fhevm-sdk';
 
 // Contract configuration
-const RATINGS_CONTRACT_ADDRESS = '0xcA2430F1B112EC25cF6b6631bb40039aCa0C86e0';
+const RATINGS_CONTRACT_ADDRESS = '0x0382053b0eae2A4A45C4A668505E2030913f559e'; // Sepolia - Updated for 0.9.0
 
 const RATINGS_CONTRACT_ABI = [
   {

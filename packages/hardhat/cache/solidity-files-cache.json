@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "E:\\OCT-BOUNTY\\fhevm-react-template\\packages\\hardhat\\contracts\\FHECounter.sol": {
-      "lastModificationDate": 1760589690196,
-      "contentHash": "ba5c544654fe50879faa26cd7822c317",
+      "lastModificationDate": 1762693499354,
+      "contentHash": "038a1d9c39c478f0820c8fbb2edaf622",
       "sourceName": "contracts/FHECounter.sol",
       "solcConfig": {
         "version": "0.8.24",
@@ -49,8 +49,8 @@
       ]
     },
     "E:\\OCT-BOUNTY\\fhevm-react-template\\packages\\hardhat\\fhevmTemp\\@fhevm\\solidity\\config\\ZamaConfig.sol": {
-      "lastModificationDate": 1761887142165,
-      "contentHash": "53afa19b446a7b49a624afc5d40ac227",
+      "lastModificationDate": 1762695915018,
+      "contentHash": "0cedd9138c558bd5ba0670647c38c767",
       "sourceName": "@fhevm/solidity/config/ZamaConfig.sol",
       "solcConfig": {
         "version": "0.8.24",
@@ -85,7 +85,6 @@
         }
       },
       "imports": [
-        "@zama-fhe/oracle-solidity/address/ZamaOracleAddress.sol",
         "@fhevm/solidity/lib/FHE.sol",
         "@fhevm/solidity/lib/Impl.sol"
       ],
@@ -94,155 +93,13 @@
       ],
       "artifacts": [
         "EthereumConfig",
-        "SepoliaConfig",
         "ZamaConfig"
-      ]
-    },
-    "E:\\OCT-BOUNTY\\fhevm-react-template\\node_modules\\.pnpm\\@fhevm+solidity@0.8.0\\node_modules\\@fhevm\\solidity\\lib\\FHE.sol": {
-      "lastModificationDate": 1760273348915,
-      "contentHash": "4595eb92a31223262d4e29a27c938d97",
-      "sourceName": "@fhevm/solidity/lib/FHE.sol",
-      "solcConfig": {
-        "version": "0.8.24",
-        "settings": {
-          "metadata": {
-            "bytecodeHash": "none",
-            "useLiteralContent": true
-          },
-          "optimizer": {
-            "enabled": true,
-            "runs": 800
-          },
-          "evmVersion": "cancun",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc",
-                "storageLayout",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./Impl.sol",
-        "./FheType.sol",
-        "encrypted-types/EncryptedTypes.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.24"
-      ],
-      "artifacts": [
-        "FHE",
-        "IDecryptionOracle",
-        "IKMSVerifier"
       ]
     },
     "E:\\OCT-BOUNTY\\fhevm-react-template\\packages\\hardhat\\fhevmTemp\\@zama-fhe\\oracle-solidity\\address\\ZamaOracleAddress.sol": {
       "lastModificationDate": 1761887142168,
       "contentHash": "7d4cce05c3d5e3799454d5a9fba75048",
       "sourceName": "@zama-fhe/oracle-solidity/address/ZamaOracleAddress.sol",
-      "solcConfig": {
-        "version": "0.8.24",
-        "settings": {
-          "metadata": {
-            "bytecodeHash": "none",
-            "useLiteralContent": true
-          },
-          "optimizer": {
-            "enabled": true,
-            "runs": 800
-          },
-          "evmVersion": "cancun",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc",
-                "storageLayout",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.24"
-      ],
-      "artifacts": []
-    },
-    "E:\\OCT-BOUNTY\\fhevm-react-template\\node_modules\\.pnpm\\@fhevm+solidity@0.8.0\\node_modules\\@fhevm\\solidity\\lib\\Impl.sol": {
-      "lastModificationDate": 1760273348915,
-      "contentHash": "82d95a375319ded89a84a9323575b351",
-      "sourceName": "@fhevm/solidity/lib/Impl.sol",
-      "solcConfig": {
-        "version": "0.8.24",
-        "settings": {
-          "metadata": {
-            "bytecodeHash": "none",
-            "useLiteralContent": true
-          },
-          "optimizer": {
-            "enabled": true,
-            "runs": 800
-          },
-          "evmVersion": "cancun",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc",
-                "storageLayout",
-                "evm.gasEstimates"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./FheType.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.24"
-      ],
-      "artifacts": [
-        "IACL",
-        "IFHEVMExecutor",
-        "IInputVerifier",
-        "Impl"
-      ]
-    },
-    "E:\\OCT-BOUNTY\\fhevm-react-template\\node_modules\\.pnpm\\@fhevm+solidity@0.8.0\\node_modules\\@fhevm\\solidity\\lib\\FheType.sol": {
-      "lastModificationDate": 1760273348915,
-      "contentHash": "65f472a3e319ba73ac6b19a5e8660d15",
-      "sourceName": "@fhevm/solidity/lib/FheType.sol",
       "solcConfig": {
         "version": "0.8.24",
         "settings": {
@@ -324,8 +181,8 @@
       "artifacts": []
     },
     "E:\\OCT-BOUNTY\\fhevm-react-template\\packages\\hardhat\\contracts\\SimpleVoting_uint32.sol": {
-      "lastModificationDate": 1760421701207,
-      "contentHash": "a8721492c1b15e0b2ff89a08b02d4983",
+      "lastModificationDate": 1762693533542,
+      "contentHash": "9549b8e2b58b5285838c0e319bcc3a59",
       "sourceName": "contracts/SimpleVoting_uint32.sol",
       "solcConfig": {
         "version": "0.8.24",
@@ -371,8 +228,8 @@
       ]
     },
     "E:\\OCT-BOUNTY\\fhevm-react-template\\packages\\hardhat\\contracts\\ReviewCardsFHE_uint32.sol": {
-      "lastModificationDate": 1760419234528,
-      "contentHash": "95e2d083b86b2b6fe6d4154a05d0e53e",
+      "lastModificationDate": 1762693514791,
+      "contentHash": "2527f1a495e438b8b863fa734d01e230",
       "sourceName": "contracts/ReviewCardsFHE_uint32.sol",
       "solcConfig": {
         "version": "0.8.24",
@@ -416,6 +273,146 @@
       "artifacts": [
         "ReviewCardsFHE"
       ]
+    },
+    "E:\\OCT-BOUNTY\\fhevm-react-template\\node_modules\\.pnpm\\@fhevm+solidity@0.9.0\\node_modules\\@fhevm\\solidity\\lib\\FHE.sol": {
+      "lastModificationDate": 1762694093514,
+      "contentHash": "a33ae20bb338477a22fc390a608f8adc",
+      "sourceName": "@fhevm/solidity/lib/FHE.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "metadata": {
+            "bytecodeHash": "none",
+            "useLiteralContent": true
+          },
+          "optimizer": {
+            "enabled": true,
+            "runs": 800
+          },
+          "evmVersion": "cancun",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./Impl.sol",
+        "./FheType.sol",
+        "encrypted-types/EncryptedTypes.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.24"
+      ],
+      "artifacts": [
+        "FHE",
+        "IKMSVerifier"
+      ]
+    },
+    "E:\\OCT-BOUNTY\\fhevm-react-template\\node_modules\\.pnpm\\@fhevm+solidity@0.9.0\\node_modules\\@fhevm\\solidity\\lib\\Impl.sol": {
+      "lastModificationDate": 1762694093515,
+      "contentHash": "6039bec93defbef7e3e2729c62b95194",
+      "sourceName": "@fhevm/solidity/lib/Impl.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "metadata": {
+            "bytecodeHash": "none",
+            "useLiteralContent": true
+          },
+          "optimizer": {
+            "enabled": true,
+            "runs": 800
+          },
+          "evmVersion": "cancun",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./FheType.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.24"
+      ],
+      "artifacts": [
+        "IACL",
+        "IFHEVMExecutor",
+        "IInputVerifier",
+        "Impl"
+      ]
+    },
+    "E:\\OCT-BOUNTY\\fhevm-react-template\\node_modules\\.pnpm\\@fhevm+solidity@0.9.0\\node_modules\\@fhevm\\solidity\\lib\\FheType.sol": {
+      "lastModificationDate": 1762694093515,
+      "contentHash": "65f472a3e319ba73ac6b19a5e8660d15",
+      "sourceName": "@fhevm/solidity/lib/FheType.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "metadata": {
+            "bytecodeHash": "none",
+            "useLiteralContent": true
+          },
+          "optimizer": {
+            "enabled": true,
+            "runs": 800
+          },
+          "evmVersion": "cancun",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.24"
+      ],
+      "artifacts": []
     }
   }
 }

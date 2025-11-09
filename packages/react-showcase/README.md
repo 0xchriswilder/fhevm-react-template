@@ -168,19 +168,46 @@ export default function FheRatings({ account, chainId, isConnected, fhevmStatus 
 }
 ```
 
-### **Voting Component (`FheVoting.tsx`)**
+### **Voting Component (`FheVoting.tsx`)** (FHEVM 0.9.0 - Self-Relaying Decryption)
 
 ```typescript
-import { useEncrypt } from '@fhevm-sdk';
+import { useEncrypt, useDecrypt } from '@fhevm-sdk';
 
 export default function FheVoting({ account, chainId, isConnected, fhevmStatus }) {
   // Encryption hook
   const { encrypt, isEncrypting, error: encryptError } = useEncrypt();
   
+  // Decryption hook (with decryptMultiple for self-relaying pattern)
+  const { decryptMultiple, isDecrypting, error: decryptError } = useDecrypt();
+  
   // Cast vote
   const castVote = async (sessionId, vote) => {
     const encrypted = await encrypt(VOTING_CONTRACT_ADDRESS, account, vote === 'yes' ? 1 : 0);
-    await contract.vote(sessionId, encrypted.handles[0], encrypted.inputProof);
+    await contract.vote(sessionId, encrypted.encryptedData, encrypted.proof);
+  };
+  
+  // Request tally reveal with self-relaying decryption
+  const requestTallyReveal = async (sessionId) => {
+    // Step 1: Request reveal (emits event with handles)
+    const tx = await contract.requestTallyReveal(sessionId);
+    const receipt = await tx.wait();
+    
+    // Step 2: Extract handles from event
+    const event = receipt.logs.find(log => {
+      const parsed = contract.interface.parseLog(log);
+      return parsed?.name === 'TallyRevealRequested';
+    });
+    const { yesVotesHandle, noVotesHandle } = contract.interface.parseLog(event).args;
+    
+    // Step 3: Decrypt multiple handles
+    const { cleartexts, decryptionProof, values } = await decryptMultiple(
+      VOTING_CONTRACT_ADDRESS,
+      signer,
+      [yesVotesHandle, noVotesHandle]
+    );
+    
+    // Step 4: Submit callback with proof
+    await contract.resolveTallyCallback(sessionId, cleartexts, decryptionProof);
   };
   
   // Rest of component...
@@ -217,10 +244,11 @@ Encryption operations:
 - `isEncrypting` - Encryption in progress
 - `error` - Encryption errors
 
-### **`useDecrypt()`**
+### **`useDecrypt()`** (FHEVM 0.9.0)
 Decryption operations:
 - `decrypt(handle, contractAddress, signer)` - User decryption (EIP-712)
 - `publicDecrypt(handle)` - Public decryption (no signature)
+- `decryptMultiple(contractAddress, signer, handles[])` - Decrypt multiple handles for self-relaying pattern (returns `{ cleartexts, decryptionProof, values }`)
 - `isDecrypting` - Decryption in progress
 - `error` - Decryption errors
 
@@ -236,7 +264,9 @@ Decryption operations:
 ## 🌐 **Live Demo**
 
 - **URL:** http://localhost:3000
-- **Contract:** `0xead137D42d2E6A6a30166EaEf97deBA1C3D1954e`
+- **FHE Counter Contract:** `0x1b45fa7b7766fb27A36fBB0cfb02ea904214Cc75` (FHEVM 0.9.0)
+- **Ratings Contract:** `0x0382053b0eae2A4A45C4A668505E2030913f559e` (FHEVM 0.9.0)
+- **Voting Contract:** `0x4D15cA56c8414CF1bEF42B63B0525aFc3751D2d1` (FHEVM 0.9.0)
 - **Network:** Sepolia testnet (Chain ID: 11155111)
 
 ## 📱 **Usage Flow**

@@ -66,6 +66,7 @@ pnpm start
 - ✅ **Multiple demos** - Counter, Voting, Ratings
 - ✅ **EIP-712 decryption** - Proper authentication
 - ✅ **Public decryption** - No signature required
+- ✅ **Self-relaying decryption** - Event-driven pattern with `decryptMultiple` (FHEVM 0.9.0)
 - ✅ **Real contract interactions** - Sepolia testnet
 - ✅ **CLI interface** - Command-line operations
 - ✅ **TypeScript support** - Full type safety
@@ -116,10 +117,10 @@ export async function runCounterDemo(fhevm: FhevmNode, config: CounterDemoConfig
   // Create contract
   const contract = fhevm.createContract(contractAddress, CONTRACT_ABI);
   
-  // Encrypt increment value
+  // Encrypt increment value (FHEVM 0.9.0)
   const encrypted = await fhevm.encrypt(contractAddress, walletAddress, 1);
   
-  // Execute increment transaction
+  // Execute increment transaction (uses encryptedData and proof)
   await fhevm.executeEncryptedTransaction(contract, 'increment', encrypted);
   
   // Read encrypted count
@@ -132,7 +133,7 @@ export async function runCounterDemo(fhevm: FhevmNode, config: CounterDemoConfig
 }
 ```
 
-### **Voting Demo (`src/voting.ts`)**
+### **Voting Demo (`src/voting.ts`)** (FHEVM 0.9.0 - Self-Relaying Decryption)
 
 ```typescript
 import { FhevmNode } from '../../fhevm-sdk/dist/adapters/node.js';
@@ -145,15 +146,38 @@ export async function runVotingDemo(fhevm: FhevmNode, config: VotingDemoConfig) 
     await contract.createSession(86400); // 24 hours
   }
   
-  // Encrypt vote (YES = 1)
+  // Encrypt vote (YES = 1) - FHEVM 0.9.0 format
   const encryptedVote = await fhevm.encrypt(VOTING_CONTRACT_ADDRESS, walletAddress, 1);
   
-  // Extract encrypted data and proof
-  const encryptedData = encryptedVote.handles[0];
-  const proof = encryptedVote.inputProof;
+  // Extract encrypted data and proof (new format)
+  const encryptedData = encryptedVote.encryptedData;
+  const proof = encryptedVote.proof;
   
   // Vote directly
   await contract.vote(sessionId, encryptedData, proof);
+  
+  // Request tally reveal with self-relaying decryption
+  if (canRequestTally) {
+    // Step 1: Request reveal (emits event)
+    const tx = await contract.requestTallyReveal(sessionId);
+    const receipt = await tx.wait();
+    
+    // Step 2: Extract handles from TallyRevealRequested event
+    const event = receipt.logs.find(log => {
+      const parsed = contract.interface.parseLog(log);
+      return parsed?.name === 'TallyRevealRequested';
+    });
+    const { yesVotesHandle, noVotesHandle } = contract.interface.parseLog(event).args;
+    
+    // Step 3: Decrypt multiple handles
+    const { cleartexts, decryptionProof, values } = await fhevm.decryptMultiple(
+      VOTING_CONTRACT_ADDRESS,
+      [yesVotesHandle, noVotesHandle]
+    );
+    
+    // Step 4: Submit callback with proof
+    await contract.resolveTallyCallback(sessionId, cleartexts, decryptionProof);
+  }
 }
 ```
 
@@ -165,10 +189,10 @@ import { FhevmNode } from '../../fhevm-sdk/dist/adapters/node.js';
 export async function runRatingsDemo(fhevm: FhevmNode, config: RatingsDemoConfig) {
   const contract = fhevm.createContract(RATINGS_CONTRACT_ADDRESS, RATINGS_CONTRACT_ABI);
   
-  // Encrypt rating (5 stars)
+  // Encrypt rating (5 stars) - FHEVM 0.9.0 format
   const encryptedRating = await fhevm.encrypt(RATINGS_CONTRACT_ADDRESS, walletAddress, 5);
   
-  // Submit rating
+  // Submit rating (uses encryptedData and proof)
   await fhevm.executeEncryptedTransaction(contract, 'submitEncryptedRating', encryptedRating, cardId);
   
   // Get encrypted stats
@@ -185,19 +209,26 @@ export async function runRatingsDemo(fhevm: FhevmNode, config: RatingsDemoConfig
 
 ## 🎯 **Available Methods**
 
-### **`FhevmNode` Class**
+### **`FhevmNode` Class** (FHEVM 0.9.0)
 
 ```typescript
 class FhevmNode {
   // Initialization
   async initialize(): Promise<void>
   
-  // Encryption
-  async encrypt(contractAddress: string, userAddress: string, value: number): Promise<any>
+  // Encryption (returns { encryptedData, proof })
+  async encrypt(contractAddress: string, userAddress: string, value: number): Promise<{
+    encryptedData: string;
+    proof: string;
+  }>
   
   // Decryption
   async decrypt(handle: string, contractAddress: string): Promise<number>
   async publicDecrypt(handle: string): Promise<number>
+  async decryptMultiple(
+    contractAddress: string,
+    handles: string[]
+  ): Promise<{ cleartexts: string; decryptionProof: string; values: number[] }>
   
   // Contract operations
   createContract(address: string, abi: any[]): ethers.Contract
@@ -224,12 +255,16 @@ class FhevmNode {
 4. **Decrypt count** - EIP-712 user decryption
 5. **Decrement workflow** - Complete decrement with decryption
 
-### **Voting Demo**
+### **Voting Demo** (FHEVM 0.9.0 - Self-Relaying Decryption)
 1. **Create voting session** - Initialize new session if needed
 2. **Check session status** - Validate session is active
 3. **Check vote status** - Verify user hasn't voted
 4. **Encrypt vote** - Create encrypted YES vote (value 1)
 5. **Submit vote** - Send encrypted vote to contract
+6. **Request tally reveal** - Trigger event with encrypted handles
+7. **Extract handles from event** - Get handles from `TallyRevealRequested` event
+8. **Decrypt multiple handles** - Use `decryptMultiple` for self-relaying pattern
+9. **Submit callback** - Call `resolveTallyCallback` with proof
 
 ### **Ratings Demo**
 1. **Get rating cards** - Read available cards from contract
@@ -241,12 +276,14 @@ class FhevmNode {
 7. **Public decrypt stats** - Decrypt without signature
 8. **Calculate average** - Compute average rating
 
-## 🌐 **Configuration**
+## 🌐 **Configuration (FHEVM 0.9.0)**
 
-- **Contract:** `0xead137D42d2E6A6a30166EaEf97deBA1C3D1954e`
-- **Ratings Contract:** `0xcA2430F1B112EC25cF6b6631bb40039aCa0C86e0`
-- **Voting Contract:** `0x7294A541222ce449faa2B8A7214C571b0fCAb52E`
+- **FHE Counter Contract:** `0x1b45fa7b7766fb27A36fBB0cfb02ea904214Cc75`
+- **Ratings Contract:** `0x0382053b0eae2A4A45C4A668505E2030913f559e`
+- **Voting Contract:** `0x4D15cA56c8414CF1bEF42B63B0525aFc3751D2d1`
 - **Network:** Sepolia testnet (Chain ID: 11155111)
+- **FHEVM Version:** 0.9.0
+- **Relayer SDK:** 0.3.0-5
 - **RPC:** Configurable via environment variables
 
 ## 📱 **Usage**

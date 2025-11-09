@@ -6,8 +6,8 @@
 import { ethers } from 'ethers';
 import { FhevmNode } from '../../fhevm-sdk/dist/adapters/node.js';
 
-// Contract configuration
-export const RATINGS_CONTRACT_ADDRESS = '0xcA2430F1B112EC25cF6b6631bb40039aCa0C86e0';
+// Contract configuration (FHEVM 0.9.0)
+export const RATINGS_CONTRACT_ADDRESS = '0x0382053b0eae2A4A45C4A668505E2030913f559e'; // Sepolia - Updated for 0.9.0
 
 export const RATINGS_CONTRACT_ABI = [
   {
@@ -161,8 +161,25 @@ export async function runRatingsDemo(fhevm: FhevmNode, config: RatingsDemoConfig
       // 6. Submit rating
       console.log(`⭐ Step 6: Submitting rating for card ${cardId}...`);
       try {
-        const receipt = await fhevm.executeEncryptedTransaction(contract, 'submitEncryptedRating', encryptedRating, cardId);
-        console.log(`✅ Rating transaction sent: ${receipt?.hash}`);
+        // submitEncryptedRating(uint256 cardId, bytes32 encryptedRating, bytes inputProof)
+        // Need to call directly with correct parameter order: cardId, encryptedRating, inputProof
+        let encryptedDataHex: string, proofHex: string;
+        if (encryptedRating && typeof encryptedRating === 'object') {
+          if ((encryptedRating as any).handles && Array.isArray((encryptedRating as any).handles) && (encryptedRating as any).handles.length > 0) {
+            const handle = (encryptedRating as any).handles[0];
+            const proof = (encryptedRating as any).inputProof;
+            encryptedDataHex = handle instanceof Uint8Array ? ethers.hexlify(handle) : handle;
+            proofHex = proof instanceof Uint8Array ? ethers.hexlify(proof) : proof;
+          } else {
+            throw new Error('Invalid encrypted rating format');
+          }
+        } else {
+          throw new Error('Invalid encrypted rating format');
+        }
+        
+        const tx = await contract.submitEncryptedRating(cardId, encryptedDataHex, proofHex);
+        console.log(`✅ Rating transaction sent: ${tx.hash}`);
+        const receipt = await tx.wait();
         console.log(`✅ Rating transaction confirmed: ${receipt?.hash}\n`);
       } catch (ratingError: any) {
         console.log('⚠️ Rating transaction failed:', ratingError.message);

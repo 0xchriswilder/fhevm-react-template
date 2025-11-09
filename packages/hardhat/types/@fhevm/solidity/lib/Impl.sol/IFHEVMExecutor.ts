@@ -52,7 +52,7 @@ export interface IFHEVMExecutorInterface extends Interface {
       | "fheSub"
       | "getInputVerifierAddress"
       | "trivialEncrypt"
-      | "verifyCiphertext"
+      | "verifyInput"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -162,7 +162,7 @@ export interface IFHEVMExecutorInterface extends Interface {
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "verifyCiphertext",
+    functionFragment: "verifyInput",
     values: [BytesLike, AddressLike, BytesLike, BigNumberish]
   ): string;
 
@@ -207,7 +207,7 @@ export interface IFHEVMExecutorInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "verifyCiphertext",
+    functionFragment: "verifyInput",
     data: BytesLike
   ): Result;
 }
@@ -411,7 +411,7 @@ export interface IFHEVMExecutor extends BaseContract {
     "nonpayable"
   >;
 
-  verifyCiphertext: TypedContractMethod<
+  verifyInput: TypedContractMethod<
     [
       inputHandle: BytesLike,
       callerAddress: AddressLike,
@@ -607,7 +607,7 @@ export interface IFHEVMExecutor extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "verifyCiphertext"
+    nameOrSignature: "verifyInput"
   ): TypedContractMethod<
     [
       inputHandle: BytesLike,

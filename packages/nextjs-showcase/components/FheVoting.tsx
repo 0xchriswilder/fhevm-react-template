@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
-import { useEncrypt } from '@fhevm-sdk';
+import { useEncrypt, useDecrypt } from '@fhevm-sdk';
 
 // Contract ABI for SimpleVoting_uint32
 const VOTING_CONTRACT_ABI = [
@@ -99,6 +99,50 @@ const VOTING_CONTRACT_ABI = [
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "sessions",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "creator",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "endTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "resolved",
+        "type": "bool"
+      },
+      {
+        "internalType": "uint32",
+        "name": "revealedYes",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "revealedNo",
+        "type": "uint32"
+      },
+      {
+        "internalType": "bool",
+        "name": "revealRequested",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "sessionId",
         "type": "uint256"
       }
@@ -107,6 +151,54 @@ const VOTING_CONTRACT_ABI = [
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "sessionId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "cleartexts",
+        "type": "bytes"
+      },
+      {
+        "internalType": "bytes",
+        "name": "decryptionProof",
+        "type": "bytes"
+      }
+    ],
+    "name": "resolveTallyCallback",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "sessionId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "yesVotesHandle",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "noVotesHandle",
+        "type": "bytes32"
+      }
+    ],
+    "name": "TallyRevealRequested",
+    "type": "event"
   },
   {
     "inputs": [
@@ -134,7 +226,7 @@ const VOTING_CONTRACT_ABI = [
 ];
 
 // Contract address for SimpleVoting_uint32
-const VOTING_CONTRACT_ADDRESS = '0x7294A541222ce449faa2B8A7214C571b0fCAb52E';
+const VOTING_CONTRACT_ADDRESS = '0x4D15cA56c8414CF1bEF42B63B0525aFc3751D2d1'; // Sepolia - Updated for 0.9.0
 
 interface VotingSession {
   id: number;
@@ -145,6 +237,7 @@ interface VotingSession {
   noVotes: number;
   hasVoted: boolean;
   canRequestTally: boolean;
+  revealRequested: boolean;
 }
 
 interface FheVotingProps {
@@ -166,26 +259,20 @@ const FheVoting = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isVoting, setIsVoting] = useState(false);
   const [isRequestingTally, setIsRequestingTally] = useState(false);
+  const [isDecrypting, setIsDecrypting] = useState(false);
   const [selectedVote, setSelectedVote] = useState<'yes' | 'no' | null>(null);
   const [newSessionDuration, setNewSessionDuration] = useState(60); // 1 minute default
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [sessionTopic, setSessionTopic] = useState('');
-  const [cachedSessions, setCachedSessions] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const CARDS_PER_PAGE = 2;
 
-  // Use adapter hook - provides automatic state management and error handling
+  // Use adapter hooks - provides automatic state management and error handling
   const { encrypt, isEncrypting, error: encryptError } = useEncrypt();
-
-  // Load sessions on component mount and when account changes
-  useEffect(() => {
-    if (isConnected && isInitialized) {
-      loadSessions();
-    }
-  }, [isConnected, isInitialized, account]);
+  const { decryptMultiple, isDecrypting: isDecryptingFromHook, error: decryptError } = useDecrypt();
 
   // Load all voting sessions
-  const loadSessions = async () => {
+  const loadSessions = useCallback(async () => {
     if (!window.ethereum) return;
 
     try {
@@ -200,6 +287,7 @@ const FheVoting = ({
         try {
           const sessionData = await contract.getSession(i);
           const hasVoted = await contract.hasVoted(i, account);
+          const sessionStruct = await contract.sessions(i);
           
           const session: VotingSession = {
             id: i,
@@ -209,6 +297,7 @@ const FheVoting = ({
             yesVotes: Number(sessionData.yesVotes),
             noVotes: Number(sessionData.noVotes),
             hasVoted,
+            revealRequested: sessionStruct.revealRequested,
             canRequestTally: sessionData.creator.toLowerCase() === account.toLowerCase() && 
                            !sessionData.resolved && 
                            Date.now() / 1000 > Number(sessionData.endTime)
@@ -227,7 +316,14 @@ const FheVoting = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [onMessage, account]);
+
+  // Load sessions on component mount and when account changes
+  useEffect(() => {
+    if (isConnected && isInitialized) {
+      loadSessions();
+    }
+  }, [isConnected, isInitialized, account, loadSessions]);
 
   // Create a new voting session
   const createSession = async () => {
@@ -284,7 +380,78 @@ const FheVoting = ({
     }
   };
 
-  // Request tally reveal
+  // Decrypt and submit tally (when reveal already requested)
+  const decryptTally = async (sessionId: number) => {
+    if (!window.ethereum || !account) return;
+
+    try {
+      setIsDecrypting(true);
+      onMessage('Fetching encrypted handles...');
+      
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const contract = new ethers.Contract(VOTING_CONTRACT_ADDRESS, VOTING_CONTRACT_ABI, signer);
+      
+      // Get handles from past TallyRevealRequested event
+      const filter = contract.filters.TallyRevealRequested(sessionId);
+      const events = await contract.queryFilter(filter);
+      
+      if (events.length === 0) {
+        throw new Error('TallyRevealRequested event not found. Please request tally reveal first.');
+      }
+      
+      // Get the most recent event and parse it
+      const latestEvent = events[events.length - 1];
+      const parsedEvent = contract.interface.parseLog({
+        topics: latestEvent.topics,
+        data: latestEvent.data
+      });
+      
+      if (!parsedEvent) {
+        throw new Error('Failed to parse TallyRevealRequested event');
+      }
+      
+      const yesVotesHandle = parsedEvent.args.yesVotesHandle;
+      const noVotesHandle = parsedEvent.args.noVotesHandle;
+      
+      onMessage('Decrypting encrypted votes (this may take a moment)...');
+      
+      // Decrypt both handles using decryptMultiple hook
+      const { cleartexts, decryptionProof, values } = await decryptMultiple(
+        VOTING_CONTRACT_ADDRESS,
+        signer,
+        [yesVotesHandle, noVotesHandle]
+      );
+      
+      const [yesVotes, noVotes] = values;
+      onMessage(`Decrypted! Yes: ${yesVotes}, No: ${noVotes}. Submitting to contract...`);
+      
+      // Call resolveTallyCallback with decrypted values and proof
+      const callbackTx = await contract.resolveTallyCallback(
+        sessionId,
+        cleartexts,
+        decryptionProof
+      );
+      
+      await callbackTx.wait();
+      
+      onMessage(`✅ Tally revealed successfully! Yes: ${yesVotes}, No: ${noVotes}`);
+      await loadSessions();
+    } catch (error: any) {
+      console.error('Error in decrypt tally process:', error);
+      if (error.message?.includes('User rejected')) {
+        onMessage('Transaction cancelled by user');
+      } else if (error.message?.includes('decrypt')) {
+        onMessage('Failed to decrypt votes. Please ensure you are the session creator.');
+      } else {
+        onMessage(`Failed: ${error.message || 'Unknown error'}`);
+      }
+    } finally {
+      setIsDecrypting(false);
+    }
+  };
+
+  // Request tally reveal and automatically handle decryption
   const requestTallyReveal = async (sessionId: number) => {
     if (!window.ethereum || !account) return;
 
@@ -296,16 +463,76 @@ const FheVoting = ({
       const signer = await provider.getSigner();
       const contract = new ethers.Contract(VOTING_CONTRACT_ADDRESS, VOTING_CONTRACT_ABI, signer);
       
+      // Step 1: Request tally reveal (emits event)
       const tx = await contract.requestTallyReveal(sessionId);
-      await tx.wait();
+      const receipt = await tx.wait();
       
-      onMessage('Tally reveal requested successfully!');
+      onMessage('Tally reveal requested! Decrypting votes...');
+      
+      // Step 2: Listen for TallyRevealRequested event
+      const event = receipt.logs.find((log: any) => {
+        try {
+          const parsed = contract.interface.parseLog(log);
+          return parsed && parsed.name === 'TallyRevealRequested';
+        } catch {
+          return false;
+        }
+      });
+      
+      if (!event) {
+        throw new Error('TallyRevealRequested event not found');
+      }
+      
+      const parsedEvent = contract.interface.parseLog(event);
+      if (!parsedEvent) {
+        throw new Error('Failed to parse TallyRevealRequested event');
+      }
+      
+      const yesVotesHandle = parsedEvent.args.yesVotesHandle;
+      const noVotesHandle = parsedEvent.args.noVotesHandle;
+      
+      // Step 3: Decrypt both handles using decryptMultiple hook
+      setIsDecrypting(true);
+      onMessage('Decrypting encrypted votes (this may take a moment)...');
+      
+      const { cleartexts, decryptionProof, values } = await decryptMultiple(
+        VOTING_CONTRACT_ADDRESS,
+        signer,
+        [yesVotesHandle, noVotesHandle]
+      );
+      
+      const [yesVotes, noVotes] = values;
+      onMessage(`Decrypted! Yes: ${yesVotes}, No: ${noVotes}. Submitting to contract...`);
+      
+      // Step 4: Call resolveTallyCallback with decrypted values and proof
+      const callbackTx = await contract.resolveTallyCallback(
+        sessionId,
+        cleartexts,
+        decryptionProof
+      );
+      
+      await callbackTx.wait();
+      
+      onMessage(`✅ Tally revealed successfully! Yes: ${yesVotes}, No: ${noVotes}`);
       await loadSessions();
-    } catch (error) {
-      console.error('Error requesting tally reveal:', error);
-      onMessage('Failed to request tally reveal');
+    } catch (error: any) {
+      console.error('Error in tally reveal process:', error);
+      if (error.message?.includes('User rejected')) {
+        onMessage('Transaction cancelled by user');
+      } else if (error.message?.includes('decrypt')) {
+        onMessage('Failed to decrypt votes. Please ensure you are the session creator.');
+      } else if (error.message?.includes('Reveal already requested')) {
+        // If reveal already requested, just decrypt
+        onMessage('Reveal already requested. Decrypting...');
+        setIsRequestingTally(false);
+        await decryptTally(sessionId);
+        return;
+      } else {
+        onMessage(`Failed: ${error.message || 'Unknown error'}`);
+      }
     } finally {
       setIsRequestingTally(false);
+      setIsDecrypting(false);
     }
   };
 
@@ -406,9 +633,9 @@ const FheVoting = ({
         </div>
         <div className="space-y-2 text-sm text-gray-300">
           <p><strong className="text-[#FFEB3B]">Encrypted Votes:</strong> Your Yes/No votes are encrypted using FHEVM before submission, keeping your choice private.</p>
-          <p><strong className="text-[#FFEB3B]">Oracle Callbacks:</strong> After voting ends, the oracle decrypts the encrypted tallies and reveals the results.</p>
-          <p><strong className="text-[#FFEB3B]">Privacy Preserving:</strong> Individual votes remain private until the session creator requests tally reveal.</p>
-          <p><strong className="text-[#FFEB3B]">Decryption Process:</strong> Only session creators can request tally reveal, which triggers oracle decryption of the encrypted vote counts.</p>
+          <p><strong className="text-[#FFEB3B]">Self-Relaying Decryption:</strong> After voting ends, the session creator requests tally reveal, which makes the encrypted tallies publicly decryptable and triggers automatic decryption.</p>
+          <p><strong className="text-[#FFEB3B]">Privacy Preserving:</strong> Individual votes remain private during voting. Tallies are only revealed when the creator requests reveal after voting ends.</p>
+          <p><strong className="text-[#FFEB3B]">Decryption Process:</strong> Only session creators can request tally reveal. The frontend automatically decrypts the encrypted vote counts and submits the results with proof to the contract.</p>
         </div>
       </div>
 
@@ -530,24 +757,29 @@ const FheVoting = ({
                 </div>
               )}
 
-              {/* Request Tally Button */}
-              {session.canRequestTally && (
+              {/* Request Tally / Decrypt Button */}
+              {session.canRequestTally && !session.resolved && (
                 <button
-                  onClick={() => requestTallyReveal(session.id)}
-                  disabled={isRequestingTally}
+                  onClick={() => session.revealRequested ? decryptTally(session.id) : requestTallyReveal(session.id)}
+                  disabled={isRequestingTally || isDecrypting || isDecryptingFromHook}
                   className="w-full btn-secondary"
                 >
-                  {isRequestingTally ? (
+                  {(isRequestingTally || isDecrypting || isDecryptingFromHook) ? (
+                    <>
                     <svg className="w-4 h-4 animate-spin mr-2" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
                     </svg>
+                      {isDecrypting || isDecryptingFromHook ? 'Decrypting...' : 'Requesting...'}
+                    </>
                   ) : (
+                    <>
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
+                      {session.revealRequested ? 'Decrypt Tally' : 'Request Tally Reveal'}
+                    </>
                   )}
-                  Request Tally Reveal
                 </button>
               )}
             </div>
@@ -656,15 +888,6 @@ const FheVoting = ({
                 <button
                   onClick={async () => {
                     if (sessionTopic.trim()) {
-                      // Cache the session topic
-                      const newCachedSession = {
-                        id: Date.now(),
-                        topic: sessionTopic,
-                        duration: newSessionDuration,
-                        createdAt: new Date().toISOString()
-                      };
-                      setCachedSessions(prev => [...prev, newCachedSession]);
-                      
                       await createSession();
                       setSessionTopic('');
                       setShowCreateModal(false);

@@ -59,7 +59,7 @@
     "verify:sepolia": "pnpm hardhat:verify:sepolia"
   },
   "dependencies": {
-    "@zama-fhe/relayer-sdk": "^0.2.0",
+    "@zama-fhe/relayer-sdk": "^0.3.0-5",
     "hardhat-deploy": "^0.11.45"
   },
   "devDependencies": {

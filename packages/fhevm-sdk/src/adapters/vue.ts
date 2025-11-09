@@ -6,7 +6,7 @@
 // Vue types will be available when used in Vue projects
 // @ts-ignore
 import { ref, computed } from 'vue';
-import { initializeFheInstance, createEncryptedInput, decryptValue, publicDecrypt as corePublicDecrypt } from '../core/index.js';
+import { initializeFheInstance, createEncryptedInput, decryptValue, publicDecrypt as corePublicDecrypt, decryptMultipleHandles } from '../core/index.js';
 import { Signer } from 'ethers';
 
 // Wallet composable
@@ -152,9 +152,28 @@ export function useDecryptVue() {
     }
   };
 
+  const decryptMultiple = async (
+    contractAddress: string,
+    signer: Signer,
+    handles: string[]
+  ): Promise<{ cleartexts: string; decryptionProof: string; values: number[] } | null> => {
+    try {
+      isDecrypting.value = true;
+      error.value = '';
+      const result = await decryptMultipleHandles(contractAddress, signer, handles);
+      return result;
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'Multiple decryption failed';
+      return null;
+    } finally {
+      isDecrypting.value = false;
+    }
+  };
+
   return {
     decrypt,
     publicDecrypt,
+    decryptMultiple,
     isDecrypting: computed(() => isDecrypting.value),
     error: computed(() => error.value),
   };
@@ -246,6 +265,27 @@ export function useFhevmOperationsVue() {
     }
   };
 
+  const decryptMultiple = async (
+    contractAddress: string,
+    signer: Signer,
+    handles: string[]
+  ): Promise<{ cleartexts: string; decryptionProof: string; values: number[] } | null> => {
+    try {
+      isDecrypting.value = true;
+      decryptError.value = '';
+      message.value = 'Decrypting multiple handles...';
+      const result = await decryptMultipleHandles(contractAddress, signer, handles);
+      message.value = 'Multiple decryption successful';
+      return result;
+    } catch (err) {
+      decryptError.value = err instanceof Error ? err.message : 'Multiple decryption failed';
+      message.value = 'Multiple decryption failed';
+      return null;
+    } finally {
+      isDecrypting.value = false;
+    }
+  };
+
   const executeTransaction = async (contract: any, method: string, ...args: any[]) => {
     try {
       isProcessing.value = true;
@@ -269,6 +309,7 @@ export function useFhevmOperationsVue() {
     encrypt,
     decrypt,
     publicDecrypt,
+    decryptMultiple,
     executeTransaction,
     isEncrypting: computed(() => isEncrypting.value),
     isDecrypting: computed(() => isDecrypting.value),

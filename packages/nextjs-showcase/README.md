@@ -113,21 +113,21 @@ export default function HomePage() {
 }
 ```
 
-### **Component Usage**
+### **Component Usage (FHEVM 0.9.0)**
 
 Components use the same hooks as React showcase:
-- `FheCounter.tsx` - Uses `useEncrypt`, `useDecrypt`, `useContract`
-- `FheRatings.tsx` - Uses `useEncrypt`, `useDecrypt`
-- `FheVoting.tsx` - Uses `useEncrypt`
+- `FheCounter.tsx` - Uses `useEncrypt`, `useDecrypt`, `useContract` (EIP-712 user decryption)
+- `FheRatings.tsx` - Uses `useEncrypt`, `useDecrypt` (public decryption)
+- `FheVoting.tsx` - Uses `useEncrypt`, `useDecrypt` (self-relaying decryption with `decryptMultiple`)
 
 ## 🎯 **Available Hooks**
 
-Same as React showcase:
+Same as React showcase (FHEVM 0.9.0):
 - **`useWallet()`** - Wallet connection management
 - **`useFhevm()`** - FHEVM instance management
 - **`useContract(address, abi)`** - Contract instance management
 - **`useEncrypt()`** - Encryption operations
-- **`useDecrypt()`** - Decryption operations
+- **`useDecrypt()`** - Decryption operations (includes `decryptMultiple` for self-relaying pattern)
 
 ## 🎯 **What It Demonstrates**
 
@@ -141,7 +141,9 @@ Same as React showcase:
 ## 🌐 **Live Demo**
 
 - **URL:** http://localhost:3001
-- **Contract:** `0xead137D42d2E6A6a30166EaEf97deBA1C3D1954e`
+- **FHE Counter Contract:** `0x1b45fa7b7766fb27A36fBB0cfb02ea904214Cc75` (FHEVM 0.9.0)
+- **Ratings Contract:** `0x0382053b0eae2A4A45C4A668505E2030913f559e` (FHEVM 0.9.0)
+- **Voting Contract:** `0x4D15cA56c8414CF1bEF42B63B0525aFc3751D2d1` (FHEVM 0.9.0)
 - **Network:** Sepolia testnet (Chain ID: 11155111)
 
 ## 📱 **Usage Flow**

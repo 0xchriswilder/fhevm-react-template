@@ -783,7 +783,7 @@ const _abi = [
         type: "uint8",
       },
     ],
-    name: "verifyCiphertext",
+    name: "verifyInput",
     outputs: [
       {
         internalType: "bytes32",

@@ -1,5 +1,5 @@
 // Type declarations for CDN imports
-declare module 'https://cdn.zama.org/relayer-sdk-js/0.2.0/relayer-sdk-js.js' {
+declare module 'https://cdn.zama.org/relayer-sdk-js/0.3.0-5/relayer-sdk-js.js' {
   export function initSDK(): Promise<void>;
   export function createInstance(config: any): Promise<any>;
   export const SepoliaConfig: any;

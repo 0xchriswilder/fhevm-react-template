@@ -1,10 +1,27 @@
 /**
- * Universal FHEVM Core - Environment-Aware SDK
- * Supports both browser and Node.js environments
- * Preserves all existing browser functionality
+ * Universal FHEVM SDK - Consolidated Instance
+ * Complete FHEVM functionality in a single file for NPX packages
+ * Includes: FHEVM instance, encryption, and decryption
+ * Updated for FHEVM 0.9 with RelayerSDK 0.3.0-5
  */
 
 let fheInstance: any = null;
+
+/**
+ * Initialize FHEVM instance
+ * Uses CDN for browser environments to avoid bundling issues
+ * Updated for RelayerSDK 0.3.0-5 (FHEVM 0.9)
+ */
+export async function initializeFheInstance(options?: { rpcUrl?: string }) {
+  // Detect environment
+  if (typeof window !== 'undefined' && window.ethereum) {
+    // Browser environment
+    return initializeBrowserFheInstance();
+  } else {
+    // Node.js environment - use new functionality
+    return initializeNodeFheInstance(options?.rpcUrl);
+  }
+}
 
 /**
  * Initialize FHEVM instance for browser environment
@@ -18,26 +35,14 @@ async function initializeBrowserFheInstance() {
   let sdk = (window as any).RelayerSDK || (window as any).relayerSDK;
   
   if (!sdk) {
-    throw new Error('RelayerSDK not loaded. Please include the script tag in your HTML:\n<script src="https://cdn.zama.org/relayer-sdk-js/0.2.0/relayer-sdk-js.umd.cjs"></script>');
+    throw new Error('RelayerSDK not loaded. Please include the script tag in your HTML:\n<script src="https://cdn.zama.org/relayer-sdk-js/0.3.0-5/relayer-sdk-js.umd.cjs"></script>');
   }
 
   const { initSDK, createInstance, SepoliaConfig } = sdk;
 
-  // Try to initialize SDK with CDN first (default behavior)
-  // If it fails (e.g., CORS error), fallback to local WASM files
-  try {
-    await initSDK(); // Try CDN first
-    console.log('✅ FHEVM SDK initialized with CDN');
-  } catch (cdnError) {
-    // If CDN fails (usually CORS), fallback to local WASM files
-    console.warn('⚠️ CDN initialization failed, falling back to local WASM files:', cdnError);
-    console.log('🔄 Trying local WASM files from public folder...');
-    await initSDK({
-      tfheParams: '/tfhe_bg.wasm',
-      kmsParams: '/kms_lib_bg.wasm'
-    });
-    console.log('✅ FHEVM SDK initialized with local WASM files');
-  }
+  // Initialize SDK with CDN
+  await initSDK();
+  console.log('✅ FHEVM SDK initialized with CDN');
   
   const config = { ...SepoliaConfig, network: window.ethereum };
   
@@ -101,21 +106,6 @@ async function initializeNodeFheInstance(rpcUrl?: string) {
   } catch (err) {
     console.error('FHEVM Node.js instance creation failed:', err);
     throw err;
-  }
-}
-
-/**
- * Initialize FHEVM instance - Environment-aware
- * MAINTAINS BACKWARD COMPATIBILITY
- */
-export async function initializeFheInstance(options?: { rpcUrl?: string }) {
-  // Detect environment
-  if (typeof window !== 'undefined' && window.ethereum) {
-    // Browser environment - use existing working code
-    return initializeBrowserFheInstance();
-  } else {
-    // Node.js environment - use new functionality
-    return initializeNodeFheInstance(options?.rpcUrl);
   }
 }
 
@@ -329,7 +319,10 @@ export async function createEncryptedInput(contractAddress: string, userAddress:
 }
 
 /**
- * Public decryption for handles that don't require user authentication
+ * Public decryption for a single handle
+ * Returns the decrypted number value
+ * @param {string} encryptedBytes - Single handle to decrypt
+ * @returns {Promise<number>} Decrypted number value
  */
 export async function publicDecrypt(encryptedBytes: string): Promise<number> {
   const fhe = getFheInstance();
@@ -338,15 +331,232 @@ export async function publicDecrypt(encryptedBytes: string): Promise<number> {
   try {
     let handle = encryptedBytes;
     if (typeof handle === "string" && handle.startsWith("0x") && handle.length === 66) {
-      const values = await fhe.publicDecrypt([handle]);
-      return Number(values[handle]);
+      console.log('🔓 Calling publicDecrypt with handle:', handle);
+      const result = await fhe.publicDecrypt([handle]);
+      console.log('🔓 publicDecrypt returned:', result);
+      
+      // SDK 0.3.0-5 returns: {clearValues: {...}, abiEncodedClearValues: '...', decryptionProof: '...'}
+      let decryptedValue;
+      
+      if (result && typeof result === 'object') {
+        // Check for SDK 0.3.0-5 format with clearValues
+        if (result.clearValues && typeof result.clearValues === 'object') {
+          // The decrypted value is in clearValues[handle] as a BigInt
+          decryptedValue = result.clearValues[handle];
+          console.log('🔓 Extracted from clearValues:', decryptedValue);
+          console.log('🔓 Value type:', typeof decryptedValue);
+          console.log('🔓 Is BigInt?', typeof decryptedValue === 'bigint');
+        } else if (Array.isArray(result)) {
+          // Legacy array format
+          decryptedValue = result[0];
+          console.log('🔓 Extracted from array:', decryptedValue);
+        } else {
+          // Try direct handle lookup (legacy format)
+          decryptedValue = result[handle] || Object.values(result)[0];
+          console.log('🔓 Extracted from object:', decryptedValue);
+        }
+      } else {
+        // Direct value
+        decryptedValue = result;
+        console.log('🔓 Direct value:', decryptedValue);
+      }
+      
+      // Convert BigInt or number to regular number
+      let numberValue;
+      if (typeof decryptedValue === 'bigint') {
+        numberValue = Number(decryptedValue);
+        console.log('🔓 Converted BigInt to number:', numberValue);
+      } else {
+        numberValue = Number(decryptedValue);
+        console.log('🔓 Converted to number:', numberValue);
+      }
+      
+      if (isNaN(numberValue)) {
+        console.error('❌ Decryption returned NaN. Raw value:', decryptedValue);
+        console.error('❌ Full response structure:', {
+          hasClearValues: !!result?.clearValues,
+          hasAbiEncoded: !!result?.abiEncodedClearValues,
+          hasProof: !!result?.decryptionProof,
+          clearValuesKeys: result?.clearValues ? Object.keys(result.clearValues) : []
+        });
+        throw new Error(`Decryption returned invalid value: ${decryptedValue}`);
+      }
+      
+      console.log('🔓 Final number value:', numberValue);
+      return numberValue;
     } else {
       throw new Error('Invalid ciphertext handle for decryption');
     }
   } catch (error: any) {
+    console.error('❌ Decryption error:', error);
     if (error?.message?.includes('Failed to fetch') || error?.message?.includes('NetworkError')) {
       throw new Error('Decryption service is temporarily unavailable. Please try again later.');
     }
     throw error;
   }
+}
+
+/**
+ * Request user decryption with EIP-712 signature
+ */
+export async function requestUserDecryption(
+  contractAddress: string,
+  signer: any,
+  ciphertextHandle: string
+): Promise<number> {
+  const relayer = getFheInstance();
+  if (!relayer) throw new Error("FHEVM not initialized");
+
+  const keypair = relayer.generateKeypair();
+  const handleContractPairs = [
+    {
+      handle: ciphertextHandle,
+      contractAddress: contractAddress,
+    },
+  ];
+
+  const startTimeStamp = Math.floor(Date.now() / 1000).toString();
+  const durationDays = "10";
+  const contractAddresses = [contractAddress];
+
+  const eip712 = relayer.createEIP712(keypair.publicKey, contractAddresses, startTimeStamp, durationDays);
+  const signature = await signer.signTypedData(eip712.domain, {
+    UserDecryptRequestVerification: eip712.types.UserDecryptRequestVerification,
+  }, eip712.message);
+
+  const result = await relayer.userDecrypt(
+    handleContractPairs,
+    keypair.privateKey,
+    keypair.publicKey,
+    signature.replace("0x", ""),
+    contractAddresses,
+    await signer.getAddress(),
+    startTimeStamp,
+    durationDays
+  );
+  
+  return Number(result[ciphertextHandle]);
+}
+
+/**
+ * Public decryption for multiple handles with proof (for contract callbacks)
+ * Returns cleartexts (ABI-encoded), decryption proof, and values array
+ * Note: Handles must be made publicly decryptable (via makePubliclyDecryptable) before calling this
+ * @param {string} contractAddress - The contract address (kept for compatibility, not used)
+ * @param {Object} signer - Ethers signer object (kept for compatibility, not used)
+ * @param {string[]} handles - Array of handles to decrypt
+ * @returns {Object} { cleartexts: string, decryptionProof: string, values: number[] }
+ */
+export async function decryptMultipleHandles(
+  contractAddress: string,
+  signer: any,
+  handles: string[]
+): Promise<{ cleartexts: string; decryptionProof: string; values: number[] }> {
+  const relayer = getFheInstance();
+  if (!relayer) throw new Error("FHEVM not initialized");
+
+  if (!handles || handles.length === 0) {
+    throw new Error("Handles array cannot be empty");
+  }
+
+  // Use publicDecrypt for multiple handles (requires handles to be publicly decryptable)
+  // This is called after requestTallyReveal() makes handles publicly decryptable
+  console.log('🔐 Calling publicDecrypt with handles:', handles);
+  const result = await relayer.publicDecrypt(handles);
+
+  console.log('🔐 publicDecrypt result structure:', {
+    hasClearValues: !!result?.clearValues,
+    hasAbiEncoded: !!result?.abiEncodedClearValues,
+    hasProof: !!result?.decryptionProof,
+    clearValuesKeys: result?.clearValues ? Object.keys(result.clearValues) : [],
+    resultKeys: Object.keys(result || {})
+  });
+
+  // Extract decrypted values in order
+  // publicDecrypt returns: { clearValues: { handle1: value1, handle2: value2 }, abiEncodedClearValues: '...', decryptionProof: '...' }
+  const values = handles.map(handle => {
+    let decrypted;
+
+    // Check for SDK 0.3.0-5 format with clearValues (BigInt values)
+    if (result?.clearValues && typeof result.clearValues === 'object') {
+      decrypted = result.clearValues[handle];
+      console.log(`🔐 Extracted ${handle} from clearValues:`, decrypted, 'Type:', typeof decrypted);
+    } else if (result && typeof result === 'object') {
+      // Try direct handle lookup (legacy format)
+      decrypted = result[handle];
+      console.log(`🔐 Extracted ${handle} from result:`, decrypted);
+    } else {
+      throw new Error(`Failed to decrypt handle: ${handle} - result format not recognized`);
+    }
+
+    if (decrypted === undefined || decrypted === null) {
+      throw new Error(`Failed to decrypt handle: ${handle} - value not found`);
+    }
+
+    // Convert BigInt or number to regular number
+    let numberValue: number;
+    if (typeof decrypted === 'bigint') {
+      numberValue = Number(decrypted);
+      console.log(`🔐 Converted BigInt to number for ${handle}:`, numberValue);
+    } else {
+      numberValue = Number(decrypted);
+    }
+
+    if (isNaN(numberValue)) {
+      throw new Error(`Decryption returned invalid value for handle ${handle}: ${decrypted}`);
+    }
+
+    return numberValue;
+  });
+
+  // Get the proof and encoded values
+  const abiEncodedClearValues = result?.abiEncodedClearValues;
+  const decryptionProof = result?.decryptionProof;
+
+  console.log('🔐 Proof check:', {
+    hasAbiEncoded: !!abiEncodedClearValues,
+    hasProof: !!decryptionProof,
+    proofType: typeof decryptionProof
+  });
+
+  if (!decryptionProof) {
+    console.error('❌ Decryption proof not found. Full result:', result);
+    throw new Error("Decryption proof not found in result. Result structure: " + JSON.stringify(Object.keys(result || {})));
+  }
+
+  // If abiEncodedClearValues is not provided, encode it ourselves
+  let cleartexts: string;
+  if (abiEncodedClearValues) {
+    cleartexts = abiEncodedClearValues;
+    console.log('🔐 Using abiEncodedClearValues from result');
+  } else {
+    // Encode as tuple (uint32, uint32, ...) for multiple values
+    const { ethers } = await import('ethers');
+    const abiCoder = ethers.AbiCoder.defaultAbiCoder();
+    const types = handles.map(() => 'uint32');
+    cleartexts = abiCoder.encode(types, values);
+    console.log('🔐 Encoded cleartexts manually:', cleartexts);
+  }
+
+  console.log('🔐 Final values:', values);
+  console.log('🔐 Cleartexts length:', cleartexts?.length);
+  console.log('🔐 Proof length:', decryptionProof?.length);
+
+  return {
+    cleartexts,
+    decryptionProof,
+    values
+  };
+}
+
+/**
+ * Public decryption for multiple handles (raw result)
+ * Returns the raw result from relayer.publicDecrypt()
+ * @param {string[]} handles - Array of handles to decrypt
+ * @returns {Promise<Object>} Raw result with clearValues, abiEncodedClearValues, decryptionProof
+ */
+export async function fetchPublicDecryption(handles: string[]): Promise<any> {
+  const relayer = getFheInstance();
+  if (!relayer) throw new Error("FHEVM not initialized");
+  return relayer.publicDecrypt(handles);
 }
