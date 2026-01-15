@@ -2,13 +2,7 @@
 
 A framework-agnostic toolkit that helps developers build confidential dApps with ease. Built with a modular adapter architecture that works seamlessly across React, Next.js, Vue, and Node.js environments.
 
-## 🎥 **Video Demo**
 
-[![YouTube](https://img.shields.io/badge/YouTube-Demo%20Video-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=UJPTUMk47hE)
-
-**Watch the Universal FHEVM SDK in action!** See live demos of all showcases and learn how to use the adapters in your projects.
-
-👉 **[Watch on YouTube](https://www.youtube.com/watch?v=UJPTUMk47hE)**
 
 ## 🌐 **Live Examples**
 
